@@ -136,13 +136,13 @@ contains
        call r_mova(arg, a)
     case (b'01000111') ! movl
        call r_movl(arg, a)
-    case (b'10001000') ! not
+    case (b'10000100') ! not
        call r_not(rp1, a)
-    case (b'10001001') ! and
+    case (b'10000101') ! and
        call r_and(rp1, rp2, a)
-    case (b'10001010') ! or
+    case (b'10000110') ! or
        call r_or(rp1, rp2, a)
-    case (b'10001011') ! xor
+    case (b'10000111') ! xor
        call r_xor(rp1, rp2, a)
     case (b'10001100') ! add
        call r_add(rp1, rp2, a)
