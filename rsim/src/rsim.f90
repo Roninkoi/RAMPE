@@ -1,6 +1,10 @@
-! RSIM - RAKR simulator
-! simulates the RAKR cpu in software
-! capable of running machine language from rasm
+! RSIM - RAKIAC simulator
+! simulates the RAKIAC CPU in software
+! capable of running machine language from RASM
+! command line use: rsim mode path
+! mode = integer 0-2 (0 = dynamic,
+! 1 = load from file, 2 = single step from file)
+! path = relative path to .rexe executable
 program rsim
   use reg
   use alu
@@ -30,7 +34,7 @@ program rsim
 
   call initreg()
 
-  write(*, "(A)") "Simulating RAKR..."
+  write(*, "(A)") "Simulating RAKIAC..."
 
   do while (t < pl .and. running == 1)
      write(*, "('ticks: ' I0)") t
