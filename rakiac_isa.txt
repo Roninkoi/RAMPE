@@ -1,0 +1,89 @@
+RAKIAC INSTRUCTION SET ARCHITECTURE
+
+The RAKIAC ISA is a RISC-style, bare-bones, barely Turing-complete architecture that
+only has about 16 instructions. Everything has been designed to fit into 8 bits, 
+from the registers to memory addresses.
+
+REGISTERS:
+
+size  name  purpose
+
+8     a     accumulator, register 0
+8     b     general purpose register 1
+8     c     gpr 2
+8     d     gpr 3
+
+8     pc    program counter
+8     ir    instruction register
+8     ar    argument register
+
+MEMORY:
+
+Unified memory for both data and program. 8-bit bytes,
+single address holds a byte of data. Address space 2**8.
+
+total max:
+256 bytes = 2048 bits
+
+INSTRUCTIONS:
+
+Instructions are divided into 2 parts: byte that goes to the
+instruction register and byte that goes to the argument register.
+These are the instruction code and argument respectively.
+
+This means that the program counter increments by 2 every cycle.
+
+Load/store architecture, mostly Intel syntax
+
+i  size = 8  mnemonic <args>   translation
+
+system:
+0 (8)        idle              ; do nothing
+1 (8)        halt              ; stop execution
+...
+
+flow:
+17 (8, 8)    jmp <address>     ; pc = address
+18 (8, 8)    jez <address>     ; if a == 0, pc = address
+
+memory:
+19 (8, 4, 4) mov <reg1> <reg2> ; reg1 = reg2
+20 (8, 8)    movr <address>    ; address = a
+21 (8, 8)    mova <address>    ; a = address
+22 (8, 8)    movl <val>        ; a = val
+
+logic:
+23 (8, 4)    not <reg>         ; a = not(reg)
+24 (8, 4, 4) and <reg1> <reg2> ; a = and(reg1, reg2)
+25 (8, 4, 4) or <reg1> <reg2>  ; a = or(reg1, reg2) 
+26 (8, 4, 4) xor <reg1> <reg2> ; a = xor(reg1, reg2)
+
+math:
+27 (8, 4, 4) add <reg1> <reg2> ; a = reg1 + reg2
+28 (8, 4, 4) sub <reg1> <reg2> ; a = reg1 - reg2
+29 (8, 4, 4) rsh <reg> <val>   ; a = rsh(reg, val)
+30 (8, 4, 4) lsh <reg> <val>   ; a = lsh(reg, val)
+
+MACHINE CODES:
+
+0000 0000 idle
+0000 0001 halt
+
+0100 0010 jmp
+0100 0011 jez
+
+0100 0100 mov
+0100 0101 movr
+0100 0110 mova
+0100 0111 movl
+
+1000 0100 not
+1000 0101 and
+1000 0110 or
+1000 0111 xor
+
+1000 1100 add
+1000 1101 sub
+1000 1110 rsh
+1000 1111 lsh
+

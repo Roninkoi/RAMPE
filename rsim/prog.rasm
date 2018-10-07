@@ -1,0 +1,14 @@
+movl 1
+mov b, a
+jmp 4
+mov a, c
+mov c, b
+mov b, a
+add a, c
+mov c, a
+movl 32
+sub c, a
+jez 13
+jmp 3
+halt
+
