@@ -62,14 +62,14 @@ contains
 
   subroutine r_rsh(a, v, acc) ! acc  = a >> v
     integer*2 :: a, v, acc
-    acc = ishft(a, -v)
+    acc = ishft(a, -(v+1))
     acc = ishft(acc, 8) ! get rid of half
     acc = ishft(acc, -8)
   end subroutine r_rsh
 
   subroutine r_lsh(a, v, acc) ! acc = a << v
     integer*2 :: a, v, acc
-    acc = ishft(a, v)
+    acc = ishft(a, v+1)
     acc = ishft(acc, 8) ! get rid of half
     acc = ishft(acc, -8)
   end subroutine r_lsh

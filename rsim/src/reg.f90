@@ -10,7 +10,6 @@ module reg
   ! special purpose registers
   integer(kind = 2) :: pc ! program counter
   integer(kind = 2) :: ir ! instruction register
-  integer(kind = 2) :: ar ! argument register
 
   integer*2 :: maxval = b'11111111'
 
@@ -34,7 +33,6 @@ contains
     write(*, "('d:  ' B8.8 ' ('I0')')") d, d
     write(*, "('pc: ' B8.8 ' ('I0')')") pc, pc
     write(*, "('ir: ' B8.8 ' ('I0')')") ir, ir
-    write(*, "('ar: ' B8.8 ' ('I0')')") ar, ar
   end subroutine printreg
 
   logical function checkof()

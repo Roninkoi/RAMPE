@@ -18,7 +18,7 @@ contains
 
     open(8, file = path)
 
-    do while (s /= "11111111") ! termination
+    do while (s /= "00000010") ! end
        read(8, *) s ! bytes?
 
        p(i) = s
@@ -60,14 +60,17 @@ module sys
 
   implicit none
 
+  integer*2 :: page = 0
+
   public :: r_idle
   public :: r_halt
 
+  public :: r_pg
   public :: r_jmp
   public :: r_jez
   public :: r_mov
-  public :: r_movr
-  public :: r_mova
+  public :: r_sto
+  public :: r_ld
   public :: r_movl
 contains
   ! system instructions
@@ -81,15 +84,23 @@ contains
   end subroutine r_halt
 
   ! func instructions
+  subroutine r_pg(pg, pc) ! page flip
+    integer*2 :: pg, pc, address
+    address = ishft(pc, 12) ! address
+    address = ishft(address, -12)
+    page = ishft(pg, 4) ! high
+    pc = page + address
+  end subroutine r_pg
+
   subroutine r_jmp(address, pc) ! jump
     integer*2 :: address, pc
-    pc = address
+    pc = page + address
   end subroutine r_jmp
 
   subroutine r_jez(address, pc, acc) ! jump equal zero
     integer*2 :: address, pc, acc
     if (acc == 0) then
-       pc = address
+       pc = page + address
     end if
   end subroutine r_jez
 
@@ -98,16 +109,16 @@ contains
     reg1 = reg2
   end subroutine r_mov
 
-  subroutine r_movr(address, acc) ! move register
+  subroutine r_sto(address, acc) ! store accumulator
     integer*2 :: address, acc
     call iwrite(address, acc)
-  end subroutine r_movr
+  end subroutine r_sto
 
-  subroutine r_mova(address, acc) ! move address
+  subroutine r_ld(address, acc) ! load address
     integer*2 :: address
     integer*2 ::  acc
     acc = fetch(address)
-  end subroutine r_mova
+  end subroutine r_ld
 
   subroutine r_movl(val, acc) ! move value
     integer*2 :: val, acc

@@ -44,20 +44,14 @@ program rsim
      if (fi) then
         ir = fetch(pc) ! instruction
         pc = pc + 1
-        ar = fetch(pc) ! arg
-        pc = pc + 1
      else
         read(*, *) si
         call swrite(pc, si)
         ir = fetch(pc) ! instruction
         pc = pc + 1
-        read(*, *) si
-        call swrite(pc, si)
-        ar = fetch(pc) ! arg
-        pc = pc + 1
      end if
 
-     call decode(ir, ar)
+     call decode(ir)
 
      if (in == 2) then ! single step
         read(*, *)
@@ -79,20 +73,25 @@ program rsim
   end do
   call memdump()
 contains
-  subroutine decode(ins, arg) ! instruction decoding
+  subroutine decode(ins) ! instruction decoding
     use reg
     use sys
     use alu
 
     implicit none
 
-    integer*2 :: ins, arg, a1, a2
+    integer*2 :: ins, i, a1, a2, v
 
     integer*2, pointer :: rp1, rp2
 
-    a1 = ishft(arg, -4) ! extract 4-bit
-    a2 = ishft(arg, 12)
-    a2 = ishft(a2, -12)
+    i = ishft(ins, -4)
+
+    v = ishft(ins, 12)
+    v = ishft(v, -12)
+    
+    a1 = ishft(v, -2) ! extract 2-bit
+    a2 = ishft(v, 14)
+    a2 = ishft(a2, -14)
 
     select case (ins) ! system code
     case (b'00000000')
@@ -102,56 +101,58 @@ contains
     end select
 
     select case(a1) ! register pointer 1
-    case (b'00000000')
+    case (b'00')
        rp1 => a
-    case (b'00000001')
+    case (b'01')
        rp1 => b
-    case (b'00000010')
+    case (b'10')
        rp1 => c
-    case (b'00000011')
+    case (b'11')
        rp1 => d
     end select
 
     select case(a2) ! register pointer 2
-    case (b'00000000')
+    case (b'00')
        rp2 => a
-    case (b'00000001')
+    case (b'01')
        rp2 => b
-    case (b'00000010')
+    case (b'10')
        rp2 => c
-    case (b'00000011')
+    case (b'11')
        rp2 => d
     end select
 
-    select case (ins) ! instruction code
-    case (b'01000010') ! jmp
-       call r_jmp(arg, pc)
-    case (b'01000011') ! jez
-       call r_jez(arg, pc, a)
-    case (b'01000100') ! mov
+    select case (i) ! instruction code
+    case (b'0001') ! pg
+       call r_pg(v, pc)
+    case (b'0010') ! jmp
+       call r_jmp(v, pc)
+    case (b'0011') ! jez
+       call r_jez(v, pc, a)
+    case (b'0100') ! mov
        call r_mov(rp1, rp2)
-    case (b'01000101') ! movr
-       call r_movr(arg, a)
-    case (b'01000110') ! mova
-       call r_mova(arg, a)
-    case (b'01000111') ! movl
-       call r_movl(arg, a)
-    case (b'10000100') ! not
+    case (b'0101') ! sto
+       call r_sto(v, a)
+    case (b'0110') ! ld
+       call r_ld(v, a)
+    case (b'0111') ! movl
+       call r_movl(v, a)
+    case (b'1000') ! not
        call r_not(rp1, a)
-    case (b'10000101') ! and
+    case (b'1001') ! and
        call r_and(rp1, rp2, a)
-    case (b'10000110') ! or
+    case (b'1010') ! or
        call r_or(rp1, rp2, a)
-    case (b'10000111') ! xor
+    case (b'1011') ! xor
        call r_xor(rp1, rp2, a)
-    case (b'10001100') ! add
+    case (b'1100') ! add
        call r_add(rp1, rp2, a)
-    case (b'10001101') ! sub
+    case (b'1101') ! sub
        call r_sub(rp1, rp2, a)
-    case (b'10001110') ! rsh
-       call r_rsh(rp1, rp2, a)
-    case (b'10001111') ! lsh
-       call r_lsh(rp1, rp2, a)
+    case (b'1110') ! rsh
+       call r_rsh(rp1, a2, a)
+    case (b'1111') ! lsh
+       call r_lsh(rp1, a2, a)
     end select
 
     nullify(rp1) ! pointers to null
