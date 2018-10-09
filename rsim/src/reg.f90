@@ -16,6 +16,9 @@ module reg
   public :: initreg
   public :: printreg
   public :: getbits
+
+  public :: r_mov
+  public :: r_movl
 contains
   subroutine initreg()
     a =  b'00000000' ! init registers
@@ -61,4 +64,15 @@ contains
     end where
     return
   end function getbits
+
+  ! register instructions
+  subroutine r_mov(reg1, reg2) ! move
+    integer*2, pointer :: reg1, reg2
+    reg1 = reg2
+  end subroutine r_mov
+
+  subroutine r_movl(val, acc) ! move value
+    integer*2 :: val, acc
+    acc = val
+  end subroutine r_movl
 end module reg

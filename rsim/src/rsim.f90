@@ -2,14 +2,14 @@
 ! simulates the RAKIAC CPU in software
 ! capable of running machine language from RASM
 ! command line use: rsim mode path
-! mode = integer 0-2 (0 = dynamic,
+! mode = integer 0-2 (0 = from stdin,
 ! 1 = load from file, 2 = single step from file)
 ! path = relative path to .rexe executable
 program rsim
+  use sys
+  use mem
   use reg
   use alu
-  use mem
-  use sys
 
   implicit none
 
@@ -37,25 +37,29 @@ program rsim
   write(*, "(A)") "Simulating RAKIAC..."
 
   do while (t < pl .and. running == 1)
+     if (in == 2) then ! single step
+        read(*, *)
+     end if
+
      write(*, "('ticks: ' I0)") t
 
      ! cpu simulation start
 
+     ! instruction fetching
      if (fi) then
         ir = fetch(pc) ! instruction
         pc = pc + 1
      else
-        read(*, *) si
-        call swrite(pc, si)
+        read(*, *) si ! from stdin
+        call swrite(pc, si) ! write to mem
         ir = fetch(pc) ! instruction
         pc = pc + 1
      end if
 
-     call decode(ir)
+     ! instruction decoding
+     call decode(ir) ! magic here
 
-     if (in == 2) then ! single step
-        read(*, *)
-     end if
+     ! cpu simulation end
 
      if (checkof()) then
         print *, "Overflow!"
@@ -65,17 +69,17 @@ program rsim
         print *, "Halt!"
      end if
 
-     ! cpu simulation end
-
      call printreg()
 
      t = t + 1
   end do
+  
   call memdump()
 contains
   subroutine decode(ins) ! instruction decoding
-    use reg
     use sys
+    use mem
+    use reg
     use alu
 
     implicit none
@@ -84,16 +88,16 @@ contains
 
     integer*2, pointer :: rp1, rp2
 
-    i = ishft(ins, -4)
+    i = ishft(ins, -4) ! extract 4- bit
 
-    v = ishft(ins, 12)
+    v = ishft(ins, 12) ! 4-bit
     v = ishft(v, -12)
-    
-    a1 = ishft(v, -2) ! extract 2-bit
+
+    a1 = ishft(v, -2) ! 2-bit
     a2 = ishft(v, 14)
     a2 = ishft(a2, -14)
 
-    select case (ins) ! system code
+    select case (ins) ! system codes
     case (b'00000000')
        call r_idle()
     case (b'00000001')
