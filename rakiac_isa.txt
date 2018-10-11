@@ -1,8 +1,8 @@
 RAKIAC INSTRUCTION SET ARCHITECTURE
 
-The RAKIAC ISA is a RISC-style, bare-bones, barely Turing-complete architecture that
-only has about 16 instructions. Everything has been designed to fit into 8 bits, 
-from the registers to memory addresses.
+The RAKIAC ISA is a RISC-style, tiny architecture that
+only has about 16 instructions. Everything has been designed 
+to fit into 8 bits, from the registers to memory addresses.
 
 REGISTERS:
 
@@ -15,75 +15,80 @@ size  name  purpose
 
 8     pc    program counter
 8     ir    instruction register
-8     ar    argument register
 
 MEMORY:
 
 Unified memory for both data and program. 8-bit bytes,
 single address holds a byte of data. Address space 2**8.
 
+16 pages, 16 bytes per page. Page flip by pg instruction.
+Page stored in high program counter.
+
 total max:
 256 bytes = 2048 bits
 
 INSTRUCTIONS:
 
-Instructions are divided into 2 parts: byte that goes to the
-instruction register and byte that goes to the argument register.
-These are the instruction code and argument respectively.
-
-This means that the program counter increments by 2 every cycle.
-
 Load/store architecture, mostly Intel syntax
+
+a = accumulator
+al = accumulator low
+pcl = program counter low
+pch = program counter high
 
 i  size = 8  mnemonic <args>   translation
 
 system:
 0 (8)        idle              ; do nothing
 1 (8)        halt              ; stop execution
+3 (8)        halt              ; end of program
 ...
 
 flow:
-17 (8, 8)    jmp <address>     ; pc = address
-18 (8, 8)    jez <address>     ; if a == 0, pc = address
+16 (4, 4)    pg <page>         ; pch = page
+17 (4, 4)    jmp <address>     ; pcl = address
+18 (4, 4)    jez <address>     ; if a == 0, pcl = address
 
 memory:
-19 (8, 4, 4) mov <reg1> <reg2> ; reg1 = reg2
-20 (8, 8)    movr <address>    ; address = a
-21 (8, 8)    mova <address>    ; a = address
-22 (8, 8)    movl <val>        ; a = val
+19 (4, 4, 4) mov <reg1> <reg2> ; reg1 = reg2
+20 (4, 4)    sto <address>     ; address = a
+21 (4, 4)    ld <address>      ; a = address
+22 (4, 4)    movl <val>        ; al = val
 
 logic:
-23 (8, 4)    not <reg>         ; a = not(reg)
-24 (8, 4, 4) and <reg1> <reg2> ; a = and(reg1, reg2)
-25 (8, 4, 4) or <reg1> <reg2>  ; a = or(reg1, reg2) 
-26 (8, 4, 4) xor <reg1> <reg2> ; a = xor(reg1, reg2)
+23 (4, 4)    not <reg>         ; a = not(reg)
+24 (4, 2, 2) and <reg1> <reg2> ; a = and(reg1, reg2)
+25 (4, 2, 2) or <reg1> <reg2>  ; a = or(reg1, reg2) 
+26 (4, 2, 2) xor <reg1> <reg2> ; a = xor(reg1, reg2)
 
 math:
-27 (8, 4, 4) add <reg1> <reg2> ; a = reg1 + reg2
-28 (8, 4, 4) sub <reg1> <reg2> ; a = reg1 - reg2
-29 (8, 4, 4) rsh <reg> <val>   ; a = rsh(reg, val)
-30 (8, 4, 4) lsh <reg> <val>   ; a = lsh(reg, val)
+27 (4, 2, 2) add <reg1> <reg2> ; a = reg1 + reg2
+28 (4, 2, 2) sub <reg1> <reg2> ; a = reg1 - reg2
+29 (4, 2, 2) rsh <reg> <val>   ; a = rsh(reg, val)
+30 (4, 2, 2) lsh <reg> <val>   ; a = lsh(reg, val)
 
 MACHINE CODES:
 
 0000 0000 idle
 0000 0001 halt
+0000 0010 end
 
-0100 0010 jmp
-0100 0011 jez
+0001 pg
+0010 jmp
+0011 jez
 
-0100 0100 mov
-0100 0101 movr
-0100 0110 mova
-0100 0111 movl
+0100 mov
+0101 sto
+0110 ld
+0111 movl
 
-1000 0100 not
-1000 0101 and
-1000 0110 or
-1000 0111 xor
+1000 not
+1001 and
+1010 or
+1011 xor
 
-1000 1100 add
-1000 1101 sub
-1000 1110 rsh
-1000 1111 lsh
+1100 add
+1101 sub
+1110 rsh
+1111 lsh
 
