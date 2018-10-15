@@ -41,7 +41,7 @@ i  size = 8  mnemonic <args>   translation
 system:
 0 (8)        idle              ; do nothing
 1 (8)        halt              ; stop execution
-3 (8)        halt              ; end of program
+3 (8)        end               ; end of program
 ...
 
 flow:
@@ -50,13 +50,13 @@ flow:
 18 (4, 4)    jez <address>     ; if a == 0, pcl = address
 
 memory:
-19 (4, 4, 4) mov <reg1> <reg2> ; reg1 = reg2
+19 (4, 2, 2) mov <reg1> <reg2> ; reg1 = reg2
 20 (4, 4)    sto <address>     ; address = a
 21 (4, 4)    ld <address>      ; a = address
 22 (4, 4)    movl <val>        ; al = val
 
 logic:
-23 (4, 4)    not <reg>         ; a = not(reg)
+23 (4, 2, 0) not <reg>         ; a = not(reg)
 24 (4, 2, 2) and <reg1> <reg2> ; a = and(reg1, reg2)
 25 (4, 2, 2) or <reg1> <reg2>  ; a = or(reg1, reg2) 
 26 (4, 2, 2) xor <reg1> <reg2> ; a = xor(reg1, reg2)
@@ -64,8 +64,8 @@ logic:
 math:
 27 (4, 2, 2) add <reg1> <reg2> ; a = reg1 + reg2
 28 (4, 2, 2) sub <reg1> <reg2> ; a = reg1 - reg2
-29 (4, 2, 2) rsh <reg> <val>   ; a = rsh(reg, val)
-30 (4, 2, 2) lsh <reg> <val>   ; a = lsh(reg, val)
+29 (4, 4)    rsh <val>         ; a = rsh(a, val)
+30 (4, 4)    lsh <val>         ; a = lsh(a, val)
 
 MACHINE CODES:
 

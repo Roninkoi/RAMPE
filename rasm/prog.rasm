@@ -1,0 +1,27 @@
+xor a, a
+movl 7
+mov b, a
+add a, b
+pg 1
+jmp 2
+halt
+idle
+idle
+idle
+idle
+idle
+idle
+idle
+idle
+idle
+idle
+idle
+idle
+idle
+idle
+pg 0
+idle
+idle
+idle
+end
+
