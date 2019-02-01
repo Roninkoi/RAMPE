@@ -10,6 +10,7 @@ module reg
   ! special purpose registers
   integer(kind = 2) :: pc ! program counter
   integer(kind = 2) :: ir ! instruction register
+  integer(kind = 2) :: mar ! memory address register
 
   integer*2 :: maxval = b'11111111'
 
@@ -18,24 +19,43 @@ module reg
   public :: getbits
 
   public :: r_mov
-  public :: r_movl
+  public :: r_ldi
 contains
   subroutine initreg()
-    a =  b'00000000' ! init registers
-    b =  b'00000000'
-    c =  b'00000000'
-    d =  b'00000000'
-    ir = b'00000000'
-    pc = b'00000000'
+    a   = b'00000000' ! init registers
+    b   = b'00000000'
+    c   = b'00000000'
+    d   = b'00000000'
+    ir  = b'00000000'
+    pc  = b'00000000'
+    mar = b'00000000'
   end subroutine initreg
 
+  integer function tc2d(v) ! twos complement to decimal
+    integer*2 :: v, val, sgn
+
+    sgn = ishft(v, -7)
+    val = ishft(v, 9)
+    val = ishft(val, -9)
+
+    if (sgn == 1) then
+       val = not(val)
+       val = val + 1
+       val = 128 + val
+    end if
+
+    tc2d = ((-1)**sgn)*val
+  end function tc2d
+
   subroutine printreg()
-    write(*, "('a:  ' B8.8 ' ('I0')')") a, a
-    write(*, "('b:  ' B8.8 ' ('I0')')") b, b
-    write(*, "('c:  ' B8.8 ' ('I0')')") c, c
-    write(*, "('d:  ' B8.8 ' ('I0')')") d, d
-    write(*, "('pc: ' B8.8 ' ('I0')')") pc, pc
-    write(*, "('ir: ' B8.8 ' ('I0')')") ir, ir
+    write(*, "('a:   ' B8.8 ' ('I0')')") a, tc2d(a)
+    write(*, "('b:   ' B8.8 ' ('I0')')") b, tc2d(b)
+    write(*, "('c:   ' B8.8 ' ('I0')')") c, tc2d(c)
+    write(*, "('d:   ' B8.8 ' ('I0')')") d, tc2d(d)
+
+    write(*, "('ir:  ' B8.8 ' ('I0')')") ir, ir
+    write(*, "('pc:  ' B8.8 ' ('I0')')") pc, pc
+    write(*, "('mar: ' B8.8 ' ('I0')')") mar, mar
   end subroutine printreg
 
   logical function checkof()
@@ -71,8 +91,8 @@ contains
     reg1 = reg2
   end subroutine r_mov
 
-  subroutine r_movl(val, acc) ! move value
+  subroutine r_ldi(val, acc) ! load direct immediate (literal)
     integer*2 :: val, acc
     acc = val
-  end subroutine r_movl
+  end subroutine r_ldi
 end module reg

@@ -8,6 +8,7 @@ program rasm
   character(32) :: ins, ml
   character(32) :: op, a1, a2
   integer :: line
+  integer*2 :: adr, bnk
 
   real :: start, end, time
 
@@ -38,7 +39,9 @@ program rasm
 
      ml = ops(op, a1, a2)
 
-     write(*, "(I4 '  ' A16A)") line, ins, ml
+     bnk = ishft(line, -4)
+     adr = line - ishft(bnk, 4)
+     write(*, "(I4 ' | ' I2 ', '  I2 ' |  ' A10A)") line, bnk, adr, ml, ins
      write(9, "(A8)") ml
 
      line = line + 1
@@ -105,7 +108,52 @@ contains
     read(c, *) i
     write(b, "(B4.4)") i   
   end function ctob4
+  
+  function ctob3(c) result(b) ! char to bit 3
+    character(32) :: c
+    character(32) :: b
+    integer :: i
 
+    read(c, *) i
+    write(b, "(B3.3)") i   
+  end function ctob3
+
+  function ctob2(c) result(b) ! char to bit 2
+    character(32) :: c
+    character(32) :: b
+    integer :: i
+
+    read(c, *) i
+    write(b, "(B2.2)") i   
+  end function ctob2
+  
+  function ctob1(c) result(b) ! char to bit 1
+    character(32) :: c
+    character(32) :: b
+    integer :: i
+
+    read(c, *) i
+    write(b, "(B1.1)") i   
+  end function ctob1
+  
+  function ctoi(c) result(b) ! char to integer
+    character(32) :: c
+    integer :: b
+    integer :: i
+
+    read(c, *) i
+    b = i
+  end function ctoi
+  
+  function itoc(i) result(b) ! integer to char
+    character(32) :: c
+    character(32) :: b
+    integer :: i
+
+    write(c, *) i
+    b = c
+  end function itoc
+  
   function rtob2(r) result(b) ! register name to bit 2
     character(32) :: r
     character(32) :: b
@@ -129,13 +177,25 @@ contains
     integer :: ai1, ai2
 
     select case (op)
-    case ("idle")
+    case ("nop")
        ml = "00000000"
-    case ("halt")
+    case ("hlt")
        ml = "00000001"
     case ("end")
        ml = "00000010"
-    case ("pg")
+    case ("atm")
+       ml = "00001000"
+    case ("mta")
+       ml = "00001001"
+    case ("atp")
+       ml = "00001010"
+    case ("pta")
+       ml = "00001111"
+    case ("lda")
+       ml = "00001100"
+    case ("sta")
+       ml = "00001101"
+    case ("sw")
        ml = "0001"
        ml = trim(ml) // trim(ctob4(a1))
     case ("jmp")
@@ -144,49 +204,54 @@ contains
     case ("jez")
        ml = "0011"
        ml = trim(ml) // trim(ctob4(a1))
-    case ("mov")
+    case ("jlz")
        ml = "0100"
+       ml = trim(ml) // trim(ctob4(a1))
+    case ("mov")
+       ml = "0101"
        ml = trim(ml) // trim(rtob2(a1))
        ml = trim(ml) // trim(rtob2(a2))
     case ("sto")
-       ml = "0101"
-       ml = trim(ml) // trim(ctob4(a1))
-    case ("ld")
        ml = "0110"
        ml = trim(ml) // trim(ctob4(a1))
-    case ("movl")
+    case ("ld")
        ml = "0111"
        ml = trim(ml) // trim(ctob4(a1))
-    case ("not")
+    case ("ldi")
        ml = "1000"
+       ml = trim(ml) // trim(ctob4(a1))
+    case ("not")
+       ml = "1001"
        ml = trim(ml) // trim(rtob2(a1))
        ml = trim(ml) // "00"
     case ("and")
-       ml = "1001"
-       ml = trim(ml) // trim(rtob2(a1))
-       ml = trim(ml) // trim(rtob2(a2))
-    case ("or")
        ml = "1010"
        ml = trim(ml) // trim(rtob2(a1))
        ml = trim(ml) // trim(rtob2(a2))
-    case ("xor")
+    case ("or")
        ml = "1011"
        ml = trim(ml) // trim(rtob2(a1))
        ml = trim(ml) // trim(rtob2(a2))
-    case ("add")
+    case ("xor")
        ml = "1100"
        ml = trim(ml) // trim(rtob2(a1))
        ml = trim(ml) // trim(rtob2(a2))
-    case ("sub")
+    case ("add")
        ml = "1101"
        ml = trim(ml) // trim(rtob2(a1))
        ml = trim(ml) // trim(rtob2(a2))
-    case ("rsh")
+    case ("sub")
        ml = "1110"
-       ml = trim(ml) // trim(ctob4(a1))
-    case ("lsh")
+       ml = trim(ml) // trim(rtob2(a1))
+       ml = trim(ml) // trim(rtob2(a2))
+    case ("sh")
        ml = "1111"
-       ml = trim(ml) // trim(ctob4(a1))
+       ml = trim(ml) // trim(ctob1(a1))
+       ml = trim(ml) // trim(ctob3(a2))
+    case ("")
+       ml = "00000000"
+    case default
+       ml = op
     end select
   end function ops
 end program rasm

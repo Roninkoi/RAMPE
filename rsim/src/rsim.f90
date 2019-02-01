@@ -14,13 +14,16 @@ program rsim
   implicit none
 
   integer*16 :: i
-  integer*2 :: t = 0 ! ticks
+  integer*16 :: t = 0 ! ticks
   integer*2 :: running = 1
 
   character(16) :: carg1, carg2
   character(16) :: si
   integer :: in = 0
   logical :: fi
+  logical :: jumping
+  
+  real :: start, end
 
   call getarg(1, carg1)
   call getarg(2, carg2)
@@ -36,30 +39,36 @@ program rsim
 
   write(*, "(A)") "Simulating RAKIAC..."
 
-  do while (t < pl .and. running == 1)
+  do while (pc < pl .and. running == 1)
      if (in == 2) then ! single step
         read(*, *)
      end if
-
-     write(*, "('ticks: ' I0)") t
+     if (in == 3) then
+        call cpu_time(start)
+        do while (end - start < 1.0/20.0) ! 20 Hz clock
+           call cpu_time(end)
+        end do
+     end if
 
      ! cpu simulation start
 
      ! instruction fetching
      if (fi) then
         ir = fetch(pc) ! instruction
-        pc = pc + 1
      else
         read(*, *) si ! from stdin
         call swrite(pc, si) ! write to mem
         ir = fetch(pc) ! instruction
-        pc = pc + 1
      end if
+
+     pc = pc + 1 ! inc pc
 
      ! instruction decoding
      call decode(ir) ! magic here
 
      ! cpu simulation end
+
+     write(*, "('ticks: ' I0)") t
 
      if (checkof()) then
         print *, "Overflow!"
@@ -73,7 +82,7 @@ program rsim
 
      t = t + 1
   end do
-  
+
   call memdump()
 contains
   subroutine decode(ins) ! instruction decoding
@@ -84,7 +93,7 @@ contains
 
     implicit none
 
-    integer*2 :: ins, i, a1, a2, v
+    integer*2 :: ins, i, a1, a2, v, v1, v3
 
     integer*2, pointer :: rp1, rp2
 
@@ -93,15 +102,33 @@ contains
     v = ishft(ins, 12) ! 4-bit
     v = ishft(v, -12)
 
+    v1 = ishft(ins, 12) ! 1-bit
+    v1 = ishft(v1, -15)
+
+    v3 = ishft(ins, 13) ! 3-bit
+    v3 = ishft(v3, -13)
+
     a1 = ishft(v, -2) ! 2-bit
     a2 = ishft(v, 14)
     a2 = ishft(a2, -14)
 
     select case (ins) ! system codes
     case (b'00000000')
-       call r_idle()
+       call r_nop()
     case (b'00000001')
-       call r_halt(running)
+       call r_hlt(running)
+    case (b'00001000')
+       call r_atm(a, mar)
+    case (b'00001001')
+       call r_mta(a, mar)
+    case (b'00001010')
+       call r_atp(a, pc)
+    case (b'00001011')
+       call r_pta(a, pc)
+    case (b'00001100')
+       call r_lda(a, mar)
+    case (b'00001101')
+       call r_sta(a, mar)
     end select
 
     select case(a1) ! register pointer 1
@@ -127,36 +154,36 @@ contains
     end select
 
     select case (i) ! instruction code
-    case (b'0001') ! pg
-       call r_pg(v, pc)
+    case (b'0001') ! sw
+       call r_sw(v, pc, mar)
     case (b'0010') ! jmp
        call r_jmp(v, pc)
     case (b'0011') ! jez
        call r_jez(v, pc, a)
-    case (b'0100') ! mov
+    case (b'0100') ! jlz
+       call r_jlz(v, pc, a)
+    case (b'0101') ! mov
        call r_mov(rp1, rp2)
-    case (b'0101') ! sto
-       call r_sto(v, a)
-    case (b'0110') ! ld
-       call r_ld(v, a)
-    case (b'0111') ! movl
-       call r_movl(v, a)
-    case (b'1000') ! not
+    case (b'0110') ! sto
+       call r_sto(a, mar, v)
+    case (b'0111') ! ld
+       call r_ld(a, mar, v)
+    case (b'1000') ! ldi
+       call r_ldi(v, a)
+    case (b'1001') ! not
        call r_not(rp1, a)
-    case (b'1001') ! and
+    case (b'1010') ! and
        call r_and(rp1, rp2, a)
-    case (b'1010') ! or
+    case (b'1011') ! or
        call r_or(rp1, rp2, a)
-    case (b'1011') ! xor
+    case (b'1100') ! xor
        call r_xor(rp1, rp2, a)
-    case (b'1100') ! add
+    case (b'1101') ! add
        call r_add(rp1, rp2, a)
-    case (b'1101') ! sub
+    case (b'1110') ! sub
        call r_sub(rp1, rp2, a)
-    case (b'1110') ! rsh
-       call r_rsh(rp1, a2, a)
-    case (b'1111') ! lsh
-       call r_lsh(rp1, a2, a)
+    case (b'1111') ! sh
+       call r_sh(a, v1, v3)
     end select
 
     nullify(rp1) ! pointers to null

@@ -8,21 +8,22 @@ REGISTERS:
 
 size  name  purpose
 
-8     a     accumulator, register 0
-8     b     general purpose register 1
-8     c     gpr 2
-8     d     gpr 3
+8     a     accumulator, register 0 (00)
+8     b     general purpose register 1 (01)
+8     c     gpr 2 (10)
+8     d     gpr 3 (11)
 
 8     pc    program counter
 8     ir    instruction register
+8     mar   memory address register
 
 MEMORY:
 
 Unified memory for both data and program. 8-bit bytes,
 single address holds a byte of data. Address space 2**8.
 
-16 pages, 16 bytes per page. Page flip by pg instruction.
-Page stored in high program counter.
+16 banks, 16 bytes per memory bank. Switch by sw instruction.
+Bank stored in high register. Separate addressing for pc and mar.
 
 total max:
 256 bytes = 2048 bits
@@ -39,56 +40,69 @@ pch = program counter high
 i  size = 8  mnemonic <args>   translation
 
 system:
-0 (8)        idle              ; do nothing
-1 (8)        halt              ; stop execution
+0 (8)        nop               ; idle
+1 (8)        hlt               ; stop execution
 3 (8)        end               ; end of program
-...
+
+8  (8)       atm               ; acc to mar
+9  (8)       mta               ; mar to acc
+10 (8)       atp               ; acc to pc
+11 (8)       pta               ; pc to acc
+12 (8)       lda               ; load address (data to acc)
+13 (8)       sta               ; store address (acc to data)
 
 flow:
-16 (4, 4)    pg <page>         ; pch = page
+16 (4, 4)    sw <bank>         ; pch, marh = bank
 17 (4, 4)    jmp <address>     ; pcl = address
 18 (4, 4)    jez <address>     ; if a == 0, pcl = address
+19 (4, 4)    jlz <address>     ; if a < 0, pcl = address
 
 memory:
-19 (4, 2, 2) mov <reg1> <reg2> ; reg1 = reg2
-20 (4, 4)    sto <address>     ; address = a
-21 (4, 4)    ld <address>      ; a = address
-22 (4, 4)    movl <val>        ; al = val
+20 (4, 2, 2) mov <reg1> <reg2> ; reg1 = reg2
+21 (4, 4)    sto <address>     ; address = a
+22 (4, 4)    ld <address>      ; a = address
+23 (4, 4)    ldi <val>         ; al = val
 
 logic:
-23 (4, 2, 0) not <reg>         ; a = not(reg)
-24 (4, 2, 2) and <reg1> <reg2> ; a = and(reg1, reg2)
-25 (4, 2, 2) or <reg1> <reg2>  ; a = or(reg1, reg2) 
-26 (4, 2, 2) xor <reg1> <reg2> ; a = xor(reg1, reg2)
+24 (4, 2, 0) not <reg>         ; a = not(reg)
+25 (4, 2, 2) and <reg1> <reg2> ; a = and(reg1, reg2)
+26 (4, 2, 2) or <reg1> <reg2>  ; a = or(reg1, reg2) 
+27 (4, 2, 2) xor <reg1> <reg2> ; a = xor(reg1, reg2)
 
 math:
-27 (4, 2, 2) add <reg1> <reg2> ; a = reg1 + reg2
-28 (4, 2, 2) sub <reg1> <reg2> ; a = reg1 - reg2
-29 (4, 4)    rsh <val>         ; a = rsh(a, val)
-30 (4, 4)    lsh <val>         ; a = lsh(a, val)
+28 (4, 2, 2) add <reg1> <reg2> ; a = reg1 + reg2
+29 (4, 2, 2) sub <reg1> <reg2> ; a = reg1 - reg2
+30 (4, 1, 3) sh <r0/l1> <val>  ; a = sh(a, val)
 
 MACHINE CODES:
 
-0000 0000 idle
-0000 0001 halt
+0000 0000 nop
+0000 0001 hlt
 0000 0010 end
 
-0001 pg
+0000 1000 atm
+0000 1001 mta
+0000 1010 atp
+0000 1011 pta
+0000 1100 lda
+0000 1101 sta
+
+0001 sw
 0010 jmp
 0011 jez
+0100 jlz
 
-0100 mov
-0101 sto
-0110 ld
-0111 movl
+0101 mov
+0110 sto
+0111 ld
+1000 ldi
 
-1000 not
-1001 and
-1010 or
-1011 xor
+1001 not
+1010 and
+1011 or
+1100 xor
 
-1100 add
-1101 sub
-1110 rsh
-1111 lsh
+1101 add
+1110 sub
+1111 sh
 

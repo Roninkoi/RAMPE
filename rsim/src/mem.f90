@@ -3,7 +3,7 @@ module mem
 
   ! program in bytes
   character(8) :: p(0:255) = "00000000"
-  integer*2 :: pl = 255 ! program length
+  integer*2 :: pl = 256 ! program length
 
   public :: loadprog
   public :: fetch
@@ -12,17 +12,22 @@ module mem
 
   public :: r_sto
   public :: r_ld
+  public :: r_lda
+  public :: r_sta
 contains
   subroutine loadprog(path) ! load from file
     character(16) :: path
     integer :: c = 0, i = 0
+    integer :: io
     character(8) :: s
 
-    open(8, file = path)
+    open(8, file = path, iostat = io)
 
-    do while (s /= "00000010") ! end
-       read(8, *) s ! bytes?
+    do while (i < pl)
+       read(8, *, iostat = io) s ! bytes?
 
+       if (io /= 0) exit
+       
        p(i) = s
 
        i = i + 1
@@ -42,12 +47,14 @@ contains
 
   subroutine iwrite(a, v)
     integer*2 :: v, a
+
     write(p(a), "(B8.8)") v
   end subroutine iwrite
 
   subroutine swrite(a, v)
     character(8) :: v
     integer*2 :: a
+
     write(p(a), "(A)") v
   end subroutine swrite
 
@@ -57,14 +64,35 @@ contains
   end subroutine memdump
 
   ! mem instructions
-  subroutine r_sto(address, acc) ! store accumulator
-    integer*2 :: address, acc
-    call iwrite(address, acc)
+  subroutine r_sto(a, mar, address) ! store accumulator
+    integer*2 :: a, mar, address
+
+    mar = ishft(mar, -4)
+    mar = ishft(mar, 4)
+    mar = mar + address
+
+    call iwrite(mar, a)
   end subroutine r_sto
 
-  subroutine r_ld(address, acc) ! load address
-    integer*2 :: address
-    integer*2 ::  acc
-    acc = fetch(address)
+  subroutine r_ld(a, mar, address) ! load accumulator
+    integer*2 :: a, mar, address
+
+    mar = ishft(mar, -4)
+    mar = ishft(mar, 4)
+    mar = mar + address
+
+    a = fetch(mar)
   end subroutine r_ld
+
+  subroutine r_lda(a, mar) ! load address
+    integer*2 :: a, mar
+
+    a = fetch(mar)
+  end subroutine r_lda
+
+  subroutine r_sta(a, mar) ! store address
+    integer*2 :: a, mar
+
+    call iwrite(mar, a)
+  end subroutine r_sta
 end module mem
