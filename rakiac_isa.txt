@@ -72,7 +72,14 @@ logic:
 math:
 28 (4, 2, 2) add <reg1> <reg2> ; a = reg1 + reg2
 29 (4, 2, 2) sub <reg1> <reg2> ; a = reg1 - reg2
-30 (4, 1, 3) sh <r0/l1> <val>  ; a = sh(a, val)
+30 (4, 2, 2) sh <r0/l1> <val>  ; a = sh(a, val + 1)
+
+pseudo:
+<label> ; label
+shr <val>
+    sh 0, val
+shl <val>
+    sh 1, val
 
 MACHINE CODES:
 
