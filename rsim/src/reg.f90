@@ -95,4 +95,20 @@ contains
     integer*2 :: val, acc
     acc = val
   end subroutine r_ldi
+
+  subroutine r_atm()
+    mar = acc
+  end subroutine r_atm
+
+  subroutine r_mta()
+    acc = mar
+  end subroutine r_mta
+
+  subroutine r_atp()
+    pc = acc
+  end subroutine r_atp
+
+  subroutine r_pta()
+    acc = pc
+  end subroutine r_pta
 end module reg

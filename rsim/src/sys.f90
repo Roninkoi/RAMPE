@@ -22,30 +22,6 @@ contains
     r = 0 ! stop
   end subroutine r_hlt
 
-  subroutine r_atm(a, mar) ! acc to mar
-    integer*2 :: a, mar
-
-    mar = a
-  end subroutine r_atm
-
-  subroutine r_mta(a, mar) ! mar to acc
-    integer*2 :: a, mar
-
-    a = mar
-  end subroutine r_mta
-
-  subroutine r_atp(a, pc) ! acc to pc
-    integer*2 :: a, pc
-
-    pc = a
-  end subroutine r_atp
-
-  subroutine r_pta(a, pc) ! pc to acc
-    integer*2 :: a, pc
-
-    a = pc
-  end subroutine r_pta
-
   ! flow instructions
   subroutine r_sw(b, pc, mar) ! memory bank switching
     integer*2 :: b, pc, mar, bank
