@@ -1,8 +1,16 @@
-ldi 9
-atm
-xor a, a
-mta
-ldi 0
-atp ; jump
+ldi 8
+sh 0, 1
+shr 1 ; hell
+; comm
+;
+; thishas asdasdasd asdasd
+; atm
+asdasdasd: shl 2
+lab:shl 2
+  shl 2
+shl 2
 hlt
+10001000
+00101001
 end
+

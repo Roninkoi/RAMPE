@@ -10,6 +10,10 @@ program rasm
   integer :: line
   integer*2 :: adr, bnk
 
+  character(32), dimension(32) :: labels
+  integer*2, dimension(32) :: ladr
+  integer :: li
+
   real :: start, end, time
 
   call getarg(1, carg1)
@@ -25,6 +29,7 @@ program rasm
   call cpu_time(start)
 
   line = 0
+  li = 0
 
   do while(ins /= "end")
      read(8, "(A)") ins
@@ -52,6 +57,15 @@ program rasm
   time = end - start
 
   print *, ""
+  print *, "labels:"
+  
+  line = 0
+  do while (line < li)
+     write(*, "(A10 ' = ' I4)") labels(line), ladr(line)
+     line = line + 1
+  end do
+
+  print *, ""
   print *, "Assembly completed in: ", time, " s"
 
   close(8)
@@ -61,7 +75,7 @@ contains
     character(32) :: ins
     character(32) :: op, a1, a2
 
-    logical :: ns, ons
+    logical :: ns, ons, istart
     character :: c
     integer :: i, word
 
@@ -71,6 +85,9 @@ contains
     i = 1
     word = 0
     ns = .true.
+    ons = .true.
+
+    istart = .false.
 
     do while (i <= 32 .and. word < 3)
        c = ins(i:i)
@@ -81,11 +98,35 @@ contains
             .and. c /= "\r" .and. c /= "\n" &
             .and. c /= "\r\n"
 
-       if (ns .and. .not. ons) then
+       if (c == ";") then ! comment, end parsing
+          return
+       end if
+
+       if (ns .and. .not. ons .and. istart) then
           word = word + 1
        end if
 
+       if (c == ":") then ! this was a label, reset
+
+          ! save label and address
+
+          !labels(li) = op
+          !ladr(li) = adr + 1
+
+          !li = li + 1
+
+          word = 0
+          c = ""
+          ns = .false.
+          ons = .true.
+          istart = .false.
+          op = ""
+          a1 = ""
+          a2 = ""
+       end if
+
        if (ns) then
+          istart = .true.
           select case (word)
           case (0)
              op = trim(op) // c
@@ -108,7 +149,7 @@ contains
     read(c, *) i
     write(b, "(B4.4)") i   
   end function ctob4
-  
+
   function ctob3(c) result(b) ! char to bit 3
     character(32) :: c
     character(32) :: b
@@ -126,7 +167,7 @@ contains
     read(c, *) i
     write(b, "(B2.2)") i   
   end function ctob2
-  
+
   function ctob1(c) result(b) ! char to bit 1
     character(32) :: c
     character(32) :: b
@@ -135,7 +176,7 @@ contains
     read(c, *) i
     write(b, "(B1.1)") i   
   end function ctob1
-  
+
   function ctoi(c) result(b) ! char to integer
     character(32) :: c
     integer :: b
@@ -144,7 +185,7 @@ contains
     read(c, *) i
     b = i
   end function ctoi
-  
+
   function itoc(i) result(b) ! integer to char
     character(32) :: c
     character(32) :: b
@@ -153,7 +194,7 @@ contains
     write(c, *) i
     b = c
   end function itoc
-  
+
   function rtob2(r) result(b) ! register name to bit 2
     character(32) :: r
     character(32) :: b
@@ -248,6 +289,12 @@ contains
        ml = "1111"
        ml = trim(ml) // trim(ctob1(a1))
        ml = trim(ml) // trim(ctob3(a2))
+    case ("shr") ! shift right
+       ml = "11110"
+       ml = trim(ml) // trim(ctob3(a1))
+    case ("shl") ! shift left
+       ml = "11111"
+       ml = trim(ml) // trim(ctob3(a1))
     case ("")
        ml = "00000000"
     case default

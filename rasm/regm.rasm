@@ -1,0 +1,8 @@
+ldi 9
+atm
+xor a, a
+mta
+ldi 0
+atp ; jump
+hlt
+end

@@ -30,7 +30,12 @@ total max:
 
 INSTRUCTIONS:
 
-Load/store architecture, mostly Intel syntax
+Load/store architecture, mostly Intel syntax.
+
+Comments begin with ";", labels use ":". Comments and labels
+are ignored, so they become nops if on an empty line. Operands
+can be separated with "," e.g. "add a, b". Binary can be inserted
+inside assembly programs, and this will get loaded directly to memory.
 
 a = accumulator
 al = accumulator low
@@ -40,9 +45,9 @@ pch = program counter high
 i  size = 8  mnemonic <args>   translation
 
 system:
-0 (8)        nop               ; idle
+0 (8)        nop               ; idle (empty lines/comments)
 1 (8)        hlt               ; stop execution
-3 (8)        end               ; end of program
+3 (8)        end               ; end of program (stops reading)
 
 8  (8)       atm               ; acc to mar
 9  (8)       mta               ; mar to acc
@@ -75,7 +80,7 @@ math:
 30 (4, 2, 2) sh <r0/l1> <val>  ; a = sh(a, val + 1)
 
 pseudo:
-<label> ; label
+<label>: ; label
 shr <val>
     sh 0, val
 shl <val>
