@@ -7,10 +7,6 @@ module sys
   public :: r_sw
   public :: r_jmp
   public :: r_jez
-  public :: r_mta
-  public :: r_atm
-  public :: r_pta
-  public :: r_atp
 contains
   ! system instructions
   subroutine r_nop()

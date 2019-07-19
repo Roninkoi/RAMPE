@@ -97,18 +97,18 @@ contains
   end subroutine r_ldi
 
   subroutine r_atm()
-    mar = acc
+    mar = a
   end subroutine r_atm
 
   subroutine r_mta()
-    acc = mar
+    a = mar
   end subroutine r_mta
 
   subroutine r_atp()
-    pc = acc
+    pc = a
   end subroutine r_atp
 
   subroutine r_pta()
-    acc = pc
+    a = pc
   end subroutine r_pta
 end module reg

@@ -55,6 +55,8 @@ system:
 11 (8)       pta               ; pc to acc
 12 (8)       lda               ; load address (data to acc)
 13 (8)       sta               ; store address (acc to data)
+14 (8)       inc               ; increment accumulator
+15 (8)       dec               ; decrement accumulator
 
 flow:
 16 (4, 4)    sw <bank>         ; pch, marh = bank
@@ -77,9 +79,9 @@ logic:
 math:
 28 (4, 2, 2) add <reg1> <reg2> ; a = reg1 + reg2
 29 (4, 2, 2) sub <reg1> <reg2> ; a = reg1 - reg2
-30 (4, 2, 2) sh <r0/l1> <val>  ; a = sh(a, val + 1)
+30 (4, 2, 2) sh <r=0/l=1> <val>  ; a = sh(a, val + 1)
 
-pseudo:
+assembler:
 <label>: ; label
 shr <val>
     sh 0, val
@@ -98,6 +100,8 @@ MACHINE CODES:
 0000 1011 pta
 0000 1100 lda
 0000 1101 sta
+0000 1110 inc
+0000 1111 dec
 
 0001 sw
 0010 jmp

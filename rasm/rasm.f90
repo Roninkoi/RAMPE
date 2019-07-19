@@ -7,12 +7,16 @@ program rasm
   character(16) :: carg1, carg2
   character(32) :: ins, ml
   character(32) :: op, a1, a2
+  character(32) :: instructions(256) ! prog max 256
   integer :: line
-  integer*2 :: adr, bnk
+  integer :: adr, bnk
 
-  character(32), dimension(32) :: labels
-  integer*2, dimension(32) :: ladr
+  character(32) :: labels(32)
+  integer :: ladr(32)
   integer :: li
+
+  character(32) :: labelc
+  integer :: labeli
 
   real :: start, end, time
 
@@ -28,24 +32,53 @@ program rasm
 
   call cpu_time(start)
 
-  line = 0
-  li = 0
+  line = 1
+  li = 1
+  labeli = 1
+  ins = ""
 
-  do while(ins /= "end")
+  do while (ins /= "end") ! preprocessing pass
      read(8, "(A)") ins
      ins = trim(ins)
+     instructions(line) = ins
+
+     bnk = ishft(line-1, -4)
+     adr = line - ishft(bnk, 4) - 1
+
+     call label(ins, labelc, li) ! memory labeling
+
+     if (labelc /= "") then
+        labels(li-1) = labelc
+        ladr(li-1) = adr
+     end if
+
+     line = line + 1
+  end do
+  
+  line = 1
+  ins = ""
+
+  do while (ins /= "end") ! instruction parsing
+     ins = instructions(line)
+
+     bnk = ishft(line-1, -4)
+     adr = line - ishft(bnk, 4) - 1
 
      call parse(ins, op, a1, a2)
 
-     !print *, op
-     !print *, a1
-     !print *, a2
-     !print *, type
+     labeli = 1
+     do while (labeli < li) ! label substitution
+        if (a1 == labels(labeli)) then
+           a1 = itoc(ladr(labeli))
+        end if
+        if (a2 == labels(labeli)) then
+           a2 = itoc(ladr(labeli))
+        end if
+        labeli = labeli + 1
+     end do
 
-     ml = ops(op, a1, a2)
+     ml = ops(op, a1, a2) ! machine translation
 
-     bnk = ishft(line, -4)
-     adr = line - ishft(bnk, 4)
      write(*, "(I4 ' | ' I2 ', '  I2 ' |  ' A10A)") line, bnk, adr, ml, ins
      write(9, "(A8)") ml
 
@@ -58,11 +91,11 @@ program rasm
 
   print *, ""
   print *, "labels:"
-  
-  line = 0
-  do while (line < li)
-     write(*, "(A10 ' = ' I4)") labels(line), ladr(line)
-     line = line + 1
+
+  labeli = 1
+  do while (labeli < li)
+     write(*, "(A10 ' = ' I4)") labels(labeli), ladr(labeli)
+     labeli = labeli + 1
   end do
 
   print *, ""
@@ -71,6 +104,54 @@ program rasm
   close(8)
   close(9)
 contains
+  subroutine label(in, lab, l)
+    character(32), intent(in) :: in
+    character(32), intent(out) :: lab
+    integer, intent(inout) :: l
+
+    logical :: ns, ons
+    character :: c
+    integer :: i
+
+    i = 1
+    ns = .true.
+    ons = .true.
+
+    lab = ""
+
+    do while (i <= 32)
+       c = in(i:i)
+
+       ons = ns
+
+       ns = c /= " " .and. c /= "," &
+            .and. c /= "\r" .and. c /= "\n" &
+            .and. c /= "\r\n"
+
+       if (c == ";") then ! comment, end parsing
+          return
+       end if
+
+       if (c == ":") then ! this was a label, reset
+
+          ! save label and address
+
+          !print *, lab
+          !print *, la
+
+          lab = in(1:i-1)
+
+          l = l + 1
+
+          c = ""
+          ns = .false.
+          ons = .true.
+       end if
+
+       i = i + 1
+    end do
+  end subroutine label
+
   subroutine parse(ins, op, a1, a2)
     character(32) :: ins
     character(32) :: op, a1, a2
@@ -106,15 +187,7 @@ contains
           word = word + 1
        end if
 
-       if (c == ":") then ! this was a label, reset
-
-          ! save label and address
-
-          !labels(li) = op
-          !ladr(li) = adr + 1
-
-          !li = li + 1
-
+       if (c == ":") then ! label, reset
           word = 0
           c = ""
           ns = .false.
@@ -236,6 +309,10 @@ contains
        ml = "00001100"
     case ("sta")
        ml = "00001101"
+    case ("inc") ! increment
+       ml = "00001110"
+    case ("dec") ! decrement
+       ml = "00001111"
     case ("sw")
        ml = "0001"
        ml = trim(ml) // trim(ctob4(a1))
