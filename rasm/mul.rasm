@@ -1,16 +1,18 @@
-jmp 3 ; multiplication routine
-00000100 ; operand 1
-00001010 ; operand 2
-ld 1
+jmp start ; multiplication routine
+op1: 00001000 ; operand 1
+op2: 00001011 ; operand 2
+start: ld op1
 mov b, a
-ld 2 ; loop start
+loop: ld op2 ; loop start
 add a, c ; repeated addition
 mov c, a
-ldi 1
-sub b, a ; dec b
+mov a, b
+dec
 mov b, a
-jez 13 ; exit
-jmp 5 ; loop end
+jez exit ; exit
+jmp loop ; loop end
+exit: mov a, c
+out
 hlt
 end
 

@@ -20,6 +20,15 @@ program rasm
 
   real :: start, end, time
 
+  integer :: argc
+
+  argc = iargc()
+
+  if (argc < 1) then
+     print *, "Usage: rasm <input.rasm> <output.rexe>"
+     return
+  endif
+
   call getarg(1, carg1)
   call getarg(2, carg2)
 
@@ -54,7 +63,7 @@ program rasm
 
      line = line + 1
   end do
-  
+
   line = 1
   ins = ""
 

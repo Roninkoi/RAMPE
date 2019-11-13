@@ -2,8 +2,9 @@
 ! simulates the RAKIAC CPU in software
 ! capable of running machine language from RASM
 ! command line use: rsim mode path
-! mode = integer 0-2 (0 = from stdin,
-! 1 = load from file, 2 = single step from file)
+! mode = integer 0-2 (0 = run from stdin,
+! 1 = run from file, 2 = single step from file,
+! 3 = slow run from file, 4 = run quietly from file)
 ! path = relative path to .rexe executable
 program rsim
   use sys
@@ -22,8 +23,17 @@ program rsim
   integer :: in = 0
   logical :: fi
   logical :: jumping
-  
+
   real :: start, end
+
+  integer :: argc
+
+  argc = iargc()
+
+  if (argc < 1) then
+     print *, "Usage: rsim <mode> <program.rexe>"
+     return
+  endif
 
   call getarg(1, carg1)
   call getarg(2, carg2)
@@ -31,13 +41,17 @@ program rsim
   fi = (in > 0)
 
   if (fi) then
-     write(*, "(A)") "Loading program..."
+     if (in /= 4) then
+        write(*, "(A, A)") "Loading program ", carg2
+     endif
      call loadprog(trim(carg2))
   end if
 
   call initreg()
 
-  write(*, "(A)") "Simulating RAKIAC..."
+  if (in /= 4) then
+     write(*, "(A)") "Simulating RAKIAC..."
+  endif
 
   do while (pc < pl .and. running == 1)
      if (in == 2) then ! single step
@@ -45,7 +59,7 @@ program rsim
      end if
      if (in == 3) then
         call cpu_time(start)
-        do while (end - start < 1.0/20.0) ! 20 Hz clock
+        do while (end - start < 1.0/10.0) ! 10 Hz clock
            call cpu_time(end)
         end do
      end if
@@ -68,17 +82,19 @@ program rsim
 
      ! cpu simulation end
 
-     write(*, "('ticks: ' I0)") t
+     if (in /= 4) then
+        write(*, "('ticks: ' I0)") t
 
-     if (checkof()) then
-        print *, "Overflow!"
-     end if
+        if (checkof()) then
+           print *, "Overflow!"
+        end if
 
-     if (running == 0) then
-        print *, "Halt!"
-     end if
+        if (running == 0) then
+           print *, "Halt!"
+        end if
 
-     call printreg()
+        call printreg()
+     endif
 
      t = t + 1
   end do
@@ -117,6 +133,8 @@ contains
        call r_nop()
     case (b'00000001')
        call r_hlt(running)
+    case (b'00000011')
+       call r_out(a)
     case (b'00001000')
        call r_atm()
     case (b'00001001')
