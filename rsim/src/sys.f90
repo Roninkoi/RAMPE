@@ -18,11 +18,6 @@ contains
     r = 0 ! stop
   end subroutine r_hlt
 
-  subroutine r_out(a)
-    integer*2 :: a
-    write(*, '(I0)') a
-  end subroutine r_out
-
   ! flow instructions
   subroutine r_sw(b, pc, mar) ! memory bank switching
     integer*2 :: b, pc, mar, bank

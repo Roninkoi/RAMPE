@@ -47,6 +47,11 @@ contains
     tc2d = ((-1)**sgn)*val
   end function tc2d
 
+  subroutine r_out(a)
+    integer*2 :: a
+    write(*, '(I0)') tc2d(a)
+  end subroutine r_out
+
   subroutine printreg()
     write(*, "('a:   ' B8.8 ' ('I0')')") a, tc2d(a)
     write(*, "('b:   ' B8.8 ' ('I0')')") b, tc2d(b)
