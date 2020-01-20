@@ -59,8 +59,8 @@ v = value, a = address, r = register
 | mta | mar to acc |
 | atp | acc to pc |
 | pta | pc to acc |
-| lda | load contents of address to acc |
-| sta | store acc to address |
+| lda | load address in mar to acc |
+| sta | store acc to address in mar |
 | inc | increment acc |
 | dec | decrement acc |
 | sw v | switch memory bank |
