@@ -49,39 +49,34 @@ mar = memory address register
 
 v = value, a = address, r = register
 
-```
-nop
-hlt
-end
-out
-
-atm
-mta
-atp
-pta
-lda
-sta
-inc
-dec
-
-sw v
-jmp a
-jez a
-jlz a
-
-mov r, r
-sto a
-ld a
-ldi v
-
-not r
-and r, r
-or r, r
-xor r, r
-
-add r, r
-sub r, r
-sh v, v
-shr v
-shl v
-```
+| Instruction | Purpose |
+| ----------- | ------- |
+| nop | no operation |
+| hlt | halt |
+| end | end of program |
+| out | print |
+| atm | acc to mar |
+| mta | mar to acc |
+| atp | acc to pc |
+| pta | pc to acc |
+| lda | load contents of address to acc |
+| sta | store acc to address |
+| inc | increment acc |
+| dec | decrement acc |
+| sw v | switch memory bank |
+| jmp a | jump |
+| jez a | jump if acc equals zero |
+| jlz a | jump if acc less than zero |
+| mov r, r | move register to register |
+| sto a | store acc to address |
+| ld a | load address to acc |
+| ldi v | load immediate to acc |
+| not r | logical not |
+| and r, r | logical and |
+| or r, r | logical or |
+| xor r, r | logical xor |
+| add r, r | addition |
+| sub r, r | subtraction |
+| sh v, v | logical shift |
+| shr v | shift right |
+| shl v | shift left |

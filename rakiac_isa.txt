@@ -1,4 +1,5 @@
 RAKIAC INSTRUCTION SET ARCHITECTURE
+-----------------------------------
 
 The RAKIAC ISA is a RISC-style, tiny architecture that
 only has about 16 instructions. Everything has been designed 
