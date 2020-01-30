@@ -7,7 +7,7 @@ module sys
   public :: r_sw
   public :: r_jmp
   public :: r_jez
-contains
+contains  
   ! system instructions
   subroutine r_nop()
     ! idle

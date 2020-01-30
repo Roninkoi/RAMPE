@@ -1,0 +1,7 @@
+s: ld v
+out v
+jez v
+jmp s
+v: 00000001
+end
+

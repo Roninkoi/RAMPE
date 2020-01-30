@@ -308,6 +308,8 @@ contains
        ml = "00000010"
     case ("out")
        ml = "00000011"
+    case ("in")
+       ml = "00000100"
     case ("atm")
        ml = "00001000"
     case ("mta")
