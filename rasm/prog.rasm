@@ -1,5 +1,5 @@
 in
-s: out a
+s: out
 jez v
 jmp s
 v: hlt

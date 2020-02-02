@@ -4,10 +4,139 @@
 ! command line use: rsim mode path
 ! mode = integer 0-2 (0 = run from stdin,
 ! 1 = run from file, 2 = single step from file,
-! 3 = slow run from file, 4 = run quietly from file)
+! 3 = slow run from file, 4 = run quietly from file,
+! 5 = run quietly from stdin)
 ! path = relative path to .rexe executable
 program rsim
   use sys
+  use mem
+  use reg
+  use alu
+
+  implicit none
+
+  integer*16 :: i
+  integer*16 :: t = 0 ! ticks
+  integer*2 :: running = 1
+
+  character(16) :: carg1, carg2
+  character(16) :: si
+  integer :: in = 0
+  logical :: fi, q
+  logical :: jumping
+
+  real :: start, end
+
+  integer :: argc
+
+  argc = iargc()
+
+  if (argc < 1) then
+     print *, "Usage: rsim <mode> <program.rexe>"
+     return
+  endif
+
+  call getarg(1, carg1)
+  call getarg(2, carg2)
+  read(carg1, *) in
+  fi = (in > 0 .and. in /= 5)
+  q = (in == 4 .or. in == 5)
+
+  if (fi) then
+     if (in /= 4) then
+        write(*, "(A, A)") "Loading program ", carg2
+     endif
+     call loadprog(trim(carg2))
+  end if
+
+  call initreg()
+
+  if (.not. q) then
+     write(*, "(A)") "Simulating RAKIAC..."
+  endif
+
+  do while (pc < pl .and. running == 1)
+     if (in == 2) then ! single step
+        read(*, *)
+     end if
+     if (in == 3) then
+        call cpu_time(start)
+        do while (end - start < 1.0/10.0) ! 10 Hz clock
+           call cpu_time(end)
+        end do
+     end if
+
+     ! cpu simulation start
+
+     ! instruction fetching
+     if (fi) then
+        ir = fetch(pc) ! instruction
+     else
+        read(*, *) si ! from stdin
+        call swrite(pc, si) ! write to mem
+        ir = fetch(pc) ! instruction
+     end if
+
+     pc = pc + 1 ! inc pc
+
+     ! instruction decoding
+     call decode(ir) ! magic here
+
+     ! cpu simulation end
+
+     if (.not. q) then
+        write(*, "('ticks: ' I0)") t
+
+        if (checkof()) then
+           print *, "Overflow!"
+        end if
+
+        if (running == 0) then
+           print *, "Halt!"
+        end if
+
+        call printreg()
+     endif
+
+     t = t + 1
+  end do
+
+  call memdump()
+contains
+  subroutine decode(ins) ! instruction decoding
+    use sys
+    use mem
+    use reg
+    use alu
+
+    implicit none
+
+    integer*2 :: ins, i, a1, a2, v, v1, v3
+
+    integer*2, pointer :: rp1, rp2
+
+    i = ishft(ins, -4) ! extract 4- bit
+
+    v = ishft(ins, 12) ! 4-bit
+    v = ishft(v, -12)
+
+    v1 = ishft(ins, 12) ! 1-bit
+    v1 = ishft(v1, -15)
+
+    v3 = ishft(ins, 13) ! 3-bit
+    v3 = ishft(v3, -13)
+
+    a1 = ishft(v, -2) ! 2-bit
+    a2 = ishft(v, 14)
+    a2 = ishft(a2, -14)
+
+    select case (ins) ! system codes
+    case (b'00000000')
+       call r_nop()
+    case (b'00000001')
+       call r_hlt(running)
+    case (b'00000011')
+       call r_out(a)
     case (b'00000100')
        call r_in(a)
     case (b'00001000')
