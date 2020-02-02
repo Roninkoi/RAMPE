@@ -55,6 +55,7 @@ v = value, a = address, r = register
 | hlt | halt |
 | end | end of program |
 | out | print |
+| in | read |
 | atm | acc to mar |
 | mta | mar to acc |
 | atp | acc to pc |
