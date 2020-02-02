@@ -5,7 +5,7 @@
 ! mode = integer 0-2 (0 = run from stdin,
 ! 1 = run from file, 2 = single step from file,
 ! 3 = slow run from file, 4 = run quietly from file,
-! 5 = run quietly from stdin)
+! 5 = run encoded quietly from file)
 ! path = relative path to .rexe executable
 program rsim
   use sys
@@ -39,14 +39,18 @@ program rsim
   call getarg(1, carg1)
   call getarg(2, carg2)
   read(carg1, *) in
-  fi = (in > 0 .and. in /= 5)
+  fi = (in > 0)
   q = (in == 4 .or. in == 5)
 
   if (fi) then
-     if (in /= 4) then
+     if (.not. q) then
         write(*, "(A, A)") "Loading program ", carg2
      endif
-     call loadprog(trim(carg2))
+     if (in == 5) then
+        call loadprogen(trim(carg2))
+     else
+        call loadprog(trim(carg2))
+     endif
   end if
 
   call initreg()

@@ -27,13 +27,39 @@ contains
        read(8, *, iostat = io) s ! bytes?
 
        if (io /= 0) exit
-       
+
        p(i) = s
 
        i = i + 1
     end do
     close(8)
   end subroutine loadprog
+
+  subroutine loadprogen(path) ! load from file
+    character(16) :: path
+    integer :: c = 0, i = 0
+    integer :: io
+    integer :: ins
+    character(8) :: s
+    character(3000) :: prog
+
+    open(8, file = path, iostat = io)
+
+    read(8, "(A)") prog
+
+    ins = 0
+    i = 0
+    do while (ins /= 538976258)
+       read(prog(i+1:i+2), "(A)") ins
+
+       write(s, "(B8.8)") char(ins)
+
+       p(i) = s
+
+       i = i + 1
+    end do
+    close(8)
+  end subroutine loadprogen
 
   function fetch(i) ! fetch instruction from memory
     integer*2 :: i
