@@ -11,13 +11,42 @@ Included are the RASM assembler and RSIM simulator. Both are written in Fortran.
 
 Usage: rasm input.rasm output.rexe
 
-![asmscreen](https://user-images.githubusercontent.com/12766039/68814179-d063bf80-0680-11ea-8f71-9be1fd8b7e75.png)
+```
+   1 |  0,  0 |  11000000  xor a, a                        
+   2 |  0,  1 |  01110110  ll loop                         
+   3 |  0,  2 |  01000100  mov b, a ; loop address in b    
+   4 |  0,  3 |  01111001  ll exit                         
+   5 |  0,  4 |  01001000  mov c, a ; exit address in c    
+   6 |  0,  5 |  11000000  xor a, a                        
+   7 |  0,  6 |  00001000  loop: inc                       
+   8 |  0,  7 |  00110010  jlz a, c                        
+   9 |  0,  8 |  00010100  jmp b                           
+  10 |  0,  9 |  00000001  exit: hlt                       
+  11 |  0, 10 |  00000000                                  
+```
 
 ## Simulator
 
 Usage: rsim mode program.rexe
 
-![simscreen](https://user-images.githubusercontent.com/12766039/68814178-ce99fc00-0680-11ea-9394-60347a9ef967.png)
+```
+ticks: 0
+a:   00000000 (0)
+b:   00000000 (0)
+c:   00000000 (0)
+d:   00000000 (0)
+ir:  11000000 (192)
+pc:  00000001 (1)
+
+ticks: 1
+a:   00000110 (6)
+b:   00000000 (0)
+c:   00000000 (0)
+d:   00000000 (0)
+ir:  01110110 (118)
+pc:  00000010 (2)
+
+```
 
 #### Modes:
 
