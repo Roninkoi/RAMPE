@@ -1,7 +1,11 @@
-in
-s: out
-jez v
-jmp s
-v: hlt
-end
+xor a, a
+ll loop
+mov b, a ; loop address in b
+ll exit
+mov c, a ; exit address in c
+xor a, a
+loop: inc
+jlz a, c
+jmp b
+exit: hlt
 

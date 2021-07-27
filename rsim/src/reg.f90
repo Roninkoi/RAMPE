@@ -10,27 +10,26 @@ module reg
   ! special purpose registers
   integer(kind = 2) :: pc ! program counter
   integer(kind = 2) :: ir ! instruction register
-  integer(kind = 2) :: mar ! memory address register
 
-  integer*2 :: maxval = b'11111111'
+  integer*2 :: maxval = int(b'11111111')
 
   public :: initreg
   public :: printreg
   public :: getbits
 
   public :: r_mov
-  public :: r_ldi
+  public :: r_ll
+  public :: r_lh
 contains
   subroutine initreg()
-    a   = b'00000000' ! init registers
-    b   = b'00000000'
-    c   = b'00000000'
-    d   = b'00000000'
-    ir  = b'00000000'
-    pc  = b'00000000'
-    mar = b'00000000'
+    a   = int(b'00000000') ! init registers
+    b   = int(b'00000000')
+    c   = int(b'00000000')
+    d   = int(b'00000000')
+    ir  = int(b'00000000')
+    pc  = int(b'00000000')
   end subroutine initreg
-  
+
   integer function tc2d(v) ! twos complement to decimal
     integer*2 :: v, val, sgn
 
@@ -46,7 +45,7 @@ contains
 
     tc2d = ((-1)**sgn)*val
   end function tc2d
-  
+
   subroutine printreg()
     write(*, "('a:   ' B8.8 ' ('I0')')") a, tc2d(a)
     write(*, "('b:   ' B8.8 ' ('I0')')") b, tc2d(b)
@@ -55,7 +54,6 @@ contains
 
     write(*, "('ir:  ' B8.8 ' ('I0')')") ir, ir
     write(*, "('pc:  ' B8.8 ' ('I0')')") pc, pc
-    write(*, "('mar: ' B8.8 ' ('I0')')") mar, mar
   end subroutine printreg
 
   logical function checkof()
@@ -84,12 +82,12 @@ contains
     end where
     return
   end function getbits
-  
+
   subroutine r_out(a)
     integer*2 :: a
     write(*, '(I0)') tc2d(a)
   end subroutine r_out
-  
+
   subroutine r_in(a)
     integer*2 :: a
     read(*, '(I8)') a
@@ -101,24 +99,17 @@ contains
     reg1 = reg2
   end subroutine r_mov
 
-  subroutine r_ldi(val, acc) ! load direct immediate (literal)
-    integer*2 :: val, acc
-    acc = val
-  end subroutine r_ldi
+  subroutine r_ll(val, acc) ! load literal value to lower 4 bits
+    integer*2 :: val, acc, h
+    acc = ishft(acc, -4)
+    acc = ishft(acc, 4)
+    acc = acc + val
+  end subroutine r_ll
 
-  subroutine r_atm()
-    mar = a
-  end subroutine r_atm
-
-  subroutine r_mta()
-    a = mar
-  end subroutine r_mta
-
-  subroutine r_atp()
-    pc = a
-  end subroutine r_atp
-
-  subroutine r_pta()
-    a = pc
-  end subroutine r_pta
+  subroutine r_lh(val, acc) ! load value to higher 4 bits
+    integer*2 :: val, acc, l
+    acc = ishft(acc, 4)
+    acc = ishft(acc, -4)
+    acc = ishft(val, 4) + acc
+  end subroutine r_lh
 end module reg

@@ -1,7 +1,7 @@
 module alu
   implicit none
 
-  integer*2 :: maxval = b'11111111'
+  integer*2 :: maxval = int(b'11111111')
 
   public :: r_inc
   public :: r_dec

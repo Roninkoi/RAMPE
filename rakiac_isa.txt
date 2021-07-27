@@ -11,21 +11,17 @@ size  name  purpose
 
 8     a     accumulator, register 0 (00)
 8     b     general purpose register 1 (01)
-8     c     gpr 2 (10)
-8     d     gpr 3 (11)
+8     c     accumulator, register 2 (10)
+8     d     general purpose register 3 (11)
 
 8     pc    program counter
 8     ir    instruction register
-8     mar   memory address register
-8     (mdr?)
 
 MEMORY:
 
 Unified memory for both data and program. 8-bit bytes,
 single address holds a byte of data. Address space 2**8.
-
-16 banks, 16 bytes per memory bank. Switch by sw instruction.
-Bank stored in high register. Separate addressing for pc and mar.
+16 banks, 16 bytes per memory bank.
 
 total max:
 256 bytes = 2048 bits
@@ -40,90 +36,96 @@ can be separated with "," e.g. "add a, b". Binary can be inserted
 inside assembly programs, and this will get loaded directly to memory.
 
 a = accumulator
-al = accumulator low
-pcl = program counter low
-pch = program counter high
+al = accumulator low 4 bits
+ah = accumulator high 4 bits
 
 i  size = 8  mnemonic <args>   translation
 
 system:
-0 (8)        nop               ; idle (empty lines/comments)
-1 (8)        hlt               ; stop execution
-3 (8)        end               ; end of program (stops reading)
-4 (8)        out               ; outputs/prints the value of a to stdout
-5 (8)		 in				   ; read value into a from stdin
+0 (8)        nop                ; idle (empty lines/comments)
+1 (8)        hlt                ; stop execution
 
-8  (8)       atm               ; acc to mar
-9  (8)       mta               ; mar to acc
-10 (8)       atp               ; acc to pc
-11 (8)       pta               ; pc to acc
-12 (8)       lda               ; load address (data to acc)
-13 (8)       sta               ; store address (acc to data)
-14 (8)       inc               ; increment accumulator
-15 (8)       dec               ; decrement accumulator
+8  (8)       inc                ; increment accumulator
+9  (8)       dec                ; decrement accumulator
+10 (8)
+11 (8)
+12 (8)
+13 (8)
+14 (8)       in			  ; read value into a from stdin (simulator)
+15 (8)       out                ; outputs/prints the value of a to stdout (simulator)
 
 flow:
-16 (4, 4)    sw <bank>         ; pch, marh = bank
-17 (4, 4)    jmp <address>     ; pcl = address
-18 (4, 4)    jez <address>     ; if a == 0, pcl = address
-19 (4, 4)    jlz <address>     ; if a < 0, pcl = address
+16 (4, 2, 0) jmp <reg>          ; pc = reg
+17 (4, 4)    jez <reg1> <reg2>  ; if reg1 == 0, pc = reg2
+18 (4, 4)    jlz <reg1> <reg2   ; if reg1 < 0, pc = reg2
 
 memory:
-20 (4, 2, 2) mov <reg1> <reg2> ; reg1 = reg2
-21 (4, 4)    sto <address>     ; address = a
-22 (4, 4)    ld <address>      ; a = address
-23 (4, 4)    ldi <val>         ; al = val
+19 (4, 2, 2) mov <reg1> <reg2>  ; reg1 = reg2
+20 (4, 4)    sto <reg1> <reg2>  ; address(reg2) = reg1
+21 (4, 4)    ld <reg1> <reg2>   ; reg1 = address(reg2)
+20 (4, 4)    ll <val> 		  ; al = val
+23 (4, 4)    lh <val>           ; ah = val
 
-logic:
-24 (4, 2, 0) not <reg>         ; a = not(reg)
-25 (4, 2, 2) and <reg1> <reg2> ; a = and(reg1, reg2)
-26 (4, 2, 2) or <reg1> <reg2>  ; a = or(reg1, reg2) 
-27 (4, 2, 2) xor <reg1> <reg2> ; a = xor(reg1, reg2)
-
-math:
-28 (4, 2, 2) add <reg1> <reg2> ; a = reg1 + reg2
-29 (4, 2, 2) sub <reg1> <reg2> ; a = reg1 - reg2
-30 (4, 2, 2) sh <r=0/l=1> <val>  ; a = sh(a, val + 1)
+logic and math:
+24 (4, 2, 0) not <reg>          ; a = not(reg)
+25 (4, 2, 2) and <reg1> <reg2>  ; a = and(reg1, reg2)
+26 (4, 2, 2) or <reg1> <reg2>   ; a = or(reg1, reg2) 
+27 (4, 2, 2) xor <reg1> <reg2>  ; a = xor(reg1, reg2)
+28 (4, 2, 2) add <reg1> <reg2>  ; a = reg1 + reg2
+29 (4, 2, 2) sub <reg1> <reg2>  ; a = reg1 - reg2
+30 (4, 2, 2) sh <r=0/l=1> <val> ; a = sh(a, val + 1)
 
 assembler:
 <label>: ; label
+
 shr <val>
-    sh 0, val
+sh 0, val
+
 shl <val>
-    sh 1, val
+sh 1, val
+
+pg ; get page number (after assembly), a = pch
+
+jmp ; jmp a
+ja <label> ; jump to label address
+jea <label> ; jump to label if a == 0
+jla <label> ; jump to label if a < 0
+
+lda <label> ; load a from label address
+{
+	ll low(label)
+	lh high(label)
+	ld a, a
+}
 
 MACHINE CODES:
 
 0000 0000 nop
 0000 0001 hlt
-0000 0010 end
-0000 0011 out
-0000 0100 in
 
-0000 1000 atm
-0000 1001 mta
-0000 1010 atp
-0000 1011 pta
-0000 1100 lda
-0000 1101 sta
-0000 1110 inc
-0000 1111 dec
+0000 1000 inc
+0000 1001 dec
+0000 1010
+0000 1011
+0000 1100
+0000 1101
+0000 1110 in
+0000 1111 out
 
-0001 sw
-0010 jmp
-0011 jez
-0100 jlz
+0001 jmp
+0010 jez
+0011 jlz
 
-0101 mov
-0110 sto
-0111 ld
-1000 ldi
+0100 mov
+0101 sto
+0110 ld
+0111 ll
+1000 lh
 
 1001 not
 1010 and
 1011 or
 1100 xor
-
 1101 add
 1110 sub
 1111 sh

@@ -12,8 +12,6 @@ module mem
 
   public :: r_sto
   public :: r_ld
-  public :: r_lda
-  public :: r_sta
 contains
   subroutine loadprog(path) ! load from file
     character(16) :: path
@@ -34,32 +32,6 @@ contains
     end do
     close(8)
   end subroutine loadprog
-
-  subroutine loadprogen(path) ! load from file
-    character(16) :: path
-    integer :: c = 0, i = 0
-    integer :: io
-    integer :: ins
-    character(8) :: s
-    character(3000) :: prog
-
-    open(8, file = path, iostat = io)
-
-    read(8, "(A)") prog
-
-    ins = 0
-    i = 0
-    do while (ins /= 538976258)
-       read(prog(i+1:i+2), "(A)") ins
-
-       write(s, "(B8.8)") char(ins)
-
-       p(i) = s
-
-       i = i + 1
-    end do
-    close(8)
-  end subroutine loadprogen
 
   function fetch(i) ! fetch instruction from memory
     integer*2 :: i
@@ -90,35 +62,15 @@ contains
   end subroutine memdump
 
   ! mem instructions
-  subroutine r_sto(a, mar, address) ! store accumulator
-    integer*2 :: a, mar, address
+  subroutine r_sto(a, b) ! store accumulator
+    integer*2 :: a, b
 
-    mar = ishft(mar, -4)
-    mar = ishft(mar, 4)
-    mar = mar + address
-
-    call iwrite(mar, a)
+    call iwrite(b, a)
   end subroutine r_sto
 
-  subroutine r_ld(a, mar, address) ! load accumulator
-    integer*2 :: a, mar, address
+  subroutine r_ld(a, b) ! load accumulator
+    integer*2 :: a, b
 
-    mar = ishft(mar, -4)
-    mar = ishft(mar, 4)
-    mar = mar + address
-
-    a = fetch(mar)
+    a = fetch(b)
   end subroutine r_ld
-
-  subroutine r_lda(a, mar) ! load address
-    integer*2 :: a, mar
-
-    a = fetch(mar)
-  end subroutine r_lda
-
-  subroutine r_sta(a, mar) ! store address
-    integer*2 :: a, mar
-
-    call iwrite(mar, a)
-  end subroutine r_sta
 end module mem

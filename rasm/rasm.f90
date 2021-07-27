@@ -8,7 +8,7 @@ program rasm
   character(32) :: ins, ml
   character(32) :: op, a1, a2
   character(32) :: instructions(256) ! prog max 256
-  integer :: line
+  integer :: line, io, lines
   integer :: adr, bnk
 
   character(32) :: labels(32)
@@ -45,9 +45,13 @@ program rasm
   li = 1
   labeli = 1
   ins = ""
+  io = 0
 
-  do while (ins /= "end") ! preprocessing pass
-     read(8, "(A)") ins
+  do while (.true.) ! preprocessing pass
+     read(8, "(A)", iostat = io) ins
+     if (io < 0) then
+        exit
+     end if
      ins = trim(ins)
      instructions(line) = ins
 
@@ -64,10 +68,12 @@ program rasm
      line = line + 1
   end do
 
+  lines = line - 1
   line = 1
   ins = ""
+  io = 0
 
-  do while (ins /= "end") ! instruction parsing
+  do while (line <= lines) ! instruction parsing
      ins = instructions(line)
 
      bnk = ishft(line-1, -4)
@@ -304,51 +310,42 @@ contains
        ml = "00000000"
     case ("hlt")
        ml = "00000001"
-    case ("end")
-       ml = "00000010"
-    case ("out")
-       ml = "00000011"
-    case ("in")
-       ml = "00000100"
-    case ("atm")
-       ml = "00001000"
-    case ("mta")
-       ml = "00001001"
-    case ("atp")
-       ml = "00001010"
-    case ("pta")
-       ml = "00001111"
-    case ("lda")
-       ml = "00001100"
-    case ("sta")
-       ml = "00001101"
     case ("inc") ! increment
-       ml = "00001110"
+       ml = "00001000"
     case ("dec") ! decrement
+       ml = "00001001"
+    case ("in")
+       ml = "00001110"
+    case ("out")
        ml = "00001111"
-    case ("sw")
-       ml = "0001"
-       ml = trim(ml) // trim(ctob4(a1))
     case ("jmp")
-       ml = "0010"
-       ml = trim(ml) // trim(ctob4(a1))
+       ml = "0001"
+       ml = trim(ml) // trim(rtob2(a1))
+       ml = trim(ml) // "00"
     case ("jez")
-       ml = "0011"
-       ml = trim(ml) // trim(ctob4(a1))
+       ml = "0010"
+       ml = trim(ml) // trim(rtob2(a1))
+       ml = trim(ml) // trim(rtob2(a2))
     case ("jlz")
-       ml = "0100"
-       ml = trim(ml) // trim(ctob4(a1))
+       ml = "0011"
+       ml = trim(ml) // trim(rtob2(a1))
+       ml = trim(ml) // trim(rtob2(a2))
     case ("mov")
-       ml = "0101"
+       ml = "0100"
        ml = trim(ml) // trim(rtob2(a1))
        ml = trim(ml) // trim(rtob2(a2))
     case ("sto")
-       ml = "0110"
-       ml = trim(ml) // trim(ctob4(a1))
+       ml = "0101"
+       ml = trim(ml) // trim(rtob2(a1))
+       ml = trim(ml) // trim(rtob2(a2))
     case ("ld")
+       ml = "0110"
+       ml = trim(ml) // trim(rtob2(a1))
+       ml = trim(ml) // trim(rtob2(a2))
+    case ("ll")
        ml = "0111"
        ml = trim(ml) // trim(ctob4(a1))
-    case ("ldi")
+    case ("lh")
        ml = "1000"
        ml = trim(ml) // trim(ctob4(a1))
     case ("not")
