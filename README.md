@@ -45,9 +45,7 @@ pc = program counter
 
 ir = instruction register
 
-mar = memory address register
-
-## List of instructions (see documentation)
+## Basic instructions (see documentation)
 
 v = value, a = address, r = register
 
@@ -55,25 +53,18 @@ v = value, a = address, r = register
 | ----------- | ------- |
 | nop | no operation |
 | hlt | halt |
-| end | end of program |
-| out | print |
 | in | read |
-| atm | acc to mar |
-| mta | mar to acc |
-| atp | acc to pc |
-| pta | pc to acc |
-| lda | load address in mar to acc |
-| sta | store acc to address in mar |
+| out | print |
 | inc | increment acc |
 | dec | decrement acc |
-| sw v | switch memory bank |
-| jmp a | jump |
-| jez a | jump if acc equals zero |
-| jlz a | jump if acc less than zero |
+| jmp r, r | jump |
+| jez r, r | jump if register equals zero |
+| jlz r, r | jump if register less than zero |
 | mov r, r | move register to register |
-| sto a | store acc to address |
-| ld a | load address to acc |
-| ldi v | load immediate to acc |
+| sto r, r | store register to address |
+| ld r, r | load address to register |
+| ll v | load immediate to al |
+| lh v | load immediate to ah |
 | not r | logical not |
 | and r, r | logical and |
 | or r, r | logical or |
@@ -81,5 +72,3 @@ v = value, a = address, r = register
 | add r, r | addition |
 | sub r, r | subtraction |
 | sh v, v | logical shift |
-| shr v | shift right |
-| shl v | shift left |
