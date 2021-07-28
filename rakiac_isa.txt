@@ -84,12 +84,9 @@ sh 0, val
 shl <val>
 sh 1, val
 
-pg ; get page number (after assembly), a = pch
-
-jmp ; jmp a
 ja <label> ; jump to label address
-jea <label> ; jump to label if a == 0
-jla <label> ; jump to label if a < 0
+jea <label> ; jump to label if b == 0
+jla <label> ; jump to label if b < 0
 
 lda <label> ; load a from label address
 {

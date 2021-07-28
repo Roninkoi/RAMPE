@@ -63,9 +63,36 @@ program rasm
         line = line + 1
         instructions(line) = "lh " // a1
      end if
+     if (op == "ja") then
+        instructions(line) = "ll " // a1
+        line = line + 1
+        instructions(line) = "lh " // a1
+        line = line + 1
+        instructions(line) = "jmp a"
+     end if
+     if (op == "jea") then
+        instructions(line) = "ll " // a1
+        line = line + 1
+        instructions(line) = "lh " // a1
+        line = line + 1
+        instructions(line) = "jez b, a"
+     end if
+     if (op == "jla") then
+        instructions(line) = "ll " // a1
+        line = line + 1
+        instructions(line) = "lh " // a1
+        line = line + 1
+        instructions(line) = "jlz b, a"
+     end if
+     if (op == "lda") then
+        instructions(line) = "ll " // a1
+        line = line + 1
+        instructions(line) = "lh " // a1
+        line = line + 1
+        instructions(line) = "ld a, a"
+     end if
      if (op == "shr") then
         instructions(line) = "sh 0, " // a1
-        print *, instructions(line)
      end if
      if (op == "shl") then
         instructions(line) = "sh 1, " // a1
