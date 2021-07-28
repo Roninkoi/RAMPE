@@ -15,7 +15,7 @@ program rsim
   implicit none
 
   integer*16 :: i
-  integer*16 :: t = 0 ! ticks
+  integer*16 :: t = 0 ! cycle
   integer*2 :: running = 1
 
   character(16) :: carg1, carg2
@@ -85,7 +85,7 @@ program rsim
      ! cpu simulation end
 
      if (.not. q) then
-        write(*, "('ticks: ' I0)") t
+        write(*, "('cycles: ' I0)") t
 
         if (checkof()) then
            print *, "Overflow!"
@@ -185,17 +185,17 @@ contains
     case (int(b'1000'))
        call r_lh(v, a)
     case (int(b'1001'))
-       call r_not(rp1, a)
+       call r_not(rp1)
     case (int(b'1010'))
-       call r_and(rp1, rp2, a)
+       call r_and(rp1, rp2)
     case (int(b'1011'))
-       call r_or(rp1, rp2, a)
+       call r_or(rp1, rp2)
     case (int(b'1100'))
-       call r_xor(rp1, rp2, a)
+       call r_xor(rp1, rp2)
     case (int(b'1101'))
-       call r_add(rp1, rp2, a)
+       call r_add(rp1, rp2)
     case (int(b'1110'))
-       call r_sub(rp1, rp2, a)
+       call r_sub(rp1, rp2)
     case (int(b'1111'))
        call r_sh(a, v1, v3)
     end select

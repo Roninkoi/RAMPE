@@ -57,7 +57,7 @@ system:
 flow:
 16 (4, 2, 0) jmp <reg>          ; pc = reg
 17 (4, 4)    jez <reg1> <reg2>  ; if reg1 == 0, pc = reg2
-18 (4, 4)    jlz <reg1> <reg2   ; if reg1 < 0, pc = reg2
+18 (4, 4)    jlz <reg1> <reg2>   ; if reg1 < 0, pc = reg2
 
 memory:
 19 (4, 2, 2) mov <reg1> <reg2>  ; reg1 = reg2
@@ -67,33 +67,99 @@ memory:
 23 (4, 4)    lh <val>           ; ah = val
 
 logic and math:
-24 (4, 2, 0) not <reg>          ; a = not(reg)
-25 (4, 2, 2) and <reg1> <reg2>  ; a = and(reg1, reg2)
-26 (4, 2, 2) or <reg1> <reg2>   ; a = or(reg1, reg2) 
-27 (4, 2, 2) xor <reg1> <reg2>  ; a = xor(reg1, reg2)
-28 (4, 2, 2) add <reg1> <reg2>  ; a = reg1 + reg2
-29 (4, 2, 2) sub <reg1> <reg2>  ; a = reg1 - reg2
+24 (4, 2, 0) not <reg>          ; reg = not(reg)
+25 (4, 2, 2) and <reg1> <reg2>  ; reg1 = and(reg1, reg2)
+26 (4, 2, 2) or <reg1> <reg2>   ; reg1 = or(reg1, reg2) 
+27 (4, 2, 2) xor <reg1> <reg2>  ; reg1 = xor(reg1, reg2)
+28 (4, 2, 2) add <reg1> <reg2>  ; reg1 = reg1 + reg2
+29 (4, 2, 2) sub <reg1> <reg2>  ; reg1 = reg1 - reg2
 30 (4, 2, 2) sh <r=0/l=1> <val> ; a = sh(a, val + 1)
 
 assembler:
 <label>: ; label
 
 shr <val>
-sh 0, val
+; sh 0, <val>
 
 shl <val>
-sh 1, val
+; sh 1, <val>
 
 ja <label> ; jump to label address
-jea <label> ; jump to label if b == 0
-jla <label> ; jump to label if b < 0
+; ll <label>
+; lh <label>
+; jmp a
+
+jea <label> ; jump to label if a == 0
+; mov b, a
+; ll <label>
+; lh <label>
+; jez b, a
+
+jla <label> ; jump to label if a < 0
+; mov b, a
+; ll <label>
+; lh <label>
+; jlz b, a
+
+jeb <label> ; jump to label if b == 0
+; ll <label>
+; lh <label>
+; jez b, a
+
+jlb <label> ; jump to label if b < 0
+; ll <label>
+; lh <label>
+; jlz b, a
+
+jeb <label> ; jump to label if c == 0
+; ll <label>
+; lh <label>
+; jez c, a
+
+jlb <label> ; jump to label if c < 0
+; ll <label>
+; lh <label>
+; jlz c, a
+
+jeb <label> ; jump to label if d == 0
+; ll <label>
+; lh <label>
+; jez d, a
+
+jlb <label> ; jump to label if d < 0
+; ll <label>
+; lh <label>
+; jlz d, a
+
+la <label> ; load a from label address
+; ll <label>
+; lh <label>
 
 lda <label> ; load a from label address
-{
-	ll low(label)
-	lh high(label)
-	ld a, a
-}
+; ll <label>
+; lh <label>
+; ld a, a
+
+sta <label> ; store a to label address
+; mov b, a
+; ll <label>
+; lh <label>
+; sto b, a
+
+stb <label> ; store b to label address
+; ll <label>
+; lh <label>
+; sto b, a
+
+stc <label> ; store c to label address
+; ll <label>
+; lh <label>
+; sto c, a
+
+std <label> ; store d to label address
+; ll <label>
+; lh <label>
+; sto d, a
 
 MACHINE CODES:
 

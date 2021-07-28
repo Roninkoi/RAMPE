@@ -58,6 +58,9 @@ program rasm
 
      call parse(ins, op, a1, a2)
 
+     bnk = ishft(line-1, -4)
+     adr = line - ishft(bnk, 4) - 1
+
      if (op == "la") then
         instructions(line) = "ll " // a1
         line = line + 1
@@ -71,6 +74,8 @@ program rasm
         instructions(line) = "jmp a"
      end if
      if (op == "jea") then
+        instructions(line) = "mov b, a"
+        line = line + 1
         instructions(line) = "ll " // a1
         line = line + 1
         instructions(line) = "lh " // a1
@@ -78,11 +83,55 @@ program rasm
         instructions(line) = "jez b, a"
      end if
      if (op == "jla") then
+        instructions(line) = "mov b, a"
+        line = line + 1
         instructions(line) = "ll " // a1
         line = line + 1
         instructions(line) = "lh " // a1
         line = line + 1
         instructions(line) = "jlz b, a"
+     end if
+     if (op == "jeb") then
+        instructions(line) = "ll " // a1
+        line = line + 1
+        instructions(line) = "lh " // a1
+        line = line + 1
+        instructions(line) = "jez b, a"
+     end if
+     if (op == "jlb") then
+        instructions(line) = "ll " // a1
+        line = line + 1
+        instructions(line) = "lh " // a1
+        line = line + 1
+        instructions(line) = "jlz b, a"
+     end if
+     if (op == "jec") then
+        instructions(line) = "ll " // a1
+        line = line + 1
+        instructions(line) = "lh " // a1
+        line = line + 1
+        instructions(line) = "jez c, a"
+     end if
+     if (op == "jlc") then
+        instructions(line) = "ll " // a1
+        line = line + 1
+        instructions(line) = "lh " // a1
+        line = line + 1
+        instructions(line) = "jlz c, a"
+     end if
+     if (op == "jed") then
+        instructions(line) = "ll " // a1
+        line = line + 1
+        instructions(line) = "lh " // a1
+        line = line + 1
+        instructions(line) = "jez d, a"
+     end if
+     if (op == "jld") then
+        instructions(line) = "ll " // a1
+        line = line + 1
+        instructions(line) = "lh " // a1
+        line = line + 1
+        instructions(line) = "jlz d, a"
      end if
      if (op == "lda") then
         instructions(line) = "ll " // a1
@@ -91,15 +140,42 @@ program rasm
         line = line + 1
         instructions(line) = "ld a, a"
      end if
+     if (op == "sta") then
+        instructions(line) = "mov b, a"
+        line = line + 1
+        instructions(line) = "ll " // a1
+        line = line + 1
+        instructions(line) = "lh " // a1
+        line = line + 1
+        instructions(line) = "sto b, a"
+     end if
+     if (op == "stb") then
+        instructions(line) = "ll " // a1
+        line = line + 1
+        instructions(line) = "lh " // a1
+        line = line + 1
+        instructions(line) = "sto b, a"
+     end if
+     if (op == "stc") then
+        instructions(line) = "ll " // a1
+        line = line + 1
+        instructions(line) = "lh " // a1
+        line = line + 1
+        instructions(line) = "sto c, a"
+     end if
+     if (op == "std") then
+        instructions(line) = "ll " // a1
+        line = line + 1
+        instructions(line) = "lh " // a1
+        line = line + 1
+        instructions(line) = "sto d, a"
+     end if
      if (op == "shr") then
         instructions(line) = "sh 0, " // a1
      end if
      if (op == "shl") then
         instructions(line) = "sh 1, " // a1
      end if
-
-     bnk = ishft(line-1, -4)
-     adr = line - ishft(bnk, 4) - 1
 
      call label(ins, labelc, li) ! memory labeling
 

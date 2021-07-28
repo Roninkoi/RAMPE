@@ -1,6 +1,22 @@
-loop: mov a, b
-inc
+ll 15
 mov b, a
-jla exit
-ja loop
-exit: hlt
+ll 7
+mov c, a
+la return
+mov d, a
+ja mul
+return: mov a, b
+out
+hlt
+
+mulreturn: ; b * c, return to d with result in b
+mul: std mulreturn ; return address
+mov d, b ; d is counter
+xor b, b
+mulloop: add b, c ; repeated addition of c
+mov a, d ; increment d
+dec
+mov d, a
+lda mulreturn ; load return address
+jez d, a ; return?
+ja mulloop ; add again

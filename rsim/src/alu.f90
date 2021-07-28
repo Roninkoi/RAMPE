@@ -18,9 +18,7 @@ contains
     integer*2 :: acc, nb
 
     acc = acc + 1
-
-    acc = ishft(acc, 8)
-    acc = ishft(acc, -8)
+    acc = iand(acc, maxval)
   end subroutine r_inc
 
   subroutine r_dec(acc) ! acc--
@@ -28,68 +26,53 @@ contains
 
     nb = not(1) + 1 ! twos
     acc = acc + nb
-
-    acc = ishft(acc, 8)
-    acc = ishft(acc, -8)
+    acc = iand(acc, maxval)
   end subroutine r_dec
 
-  subroutine r_not(a, acc) ! acc = !a
-    integer*2 :: a, acc
+  subroutine r_not(a) ! a = !a
+    integer*2 :: a
 
-    acc = not(a)
-    acc = ishft(acc, 8)
-    acc = ishft(acc, -8)
+    a = not(a)
   end subroutine r_not
 
-  subroutine r_and(a, b, acc) ! acc = a & b
-    integer*2 :: a, b, acc
+  subroutine r_and(a, b) ! a = a & b
+    integer*2 :: a, b
 
-    acc = iand(a, b)
-    acc = ishft(acc, 8)
-    acc = ishft(acc, -8)
+    a = iand(a, b)
   end subroutine r_and
 
-  subroutine r_or(a, b, acc) ! acc = a | b
-    integer*2 :: a, b, acc
+  subroutine r_or(a, b) ! a = a | b
+    integer*2 :: a, b
 
-    acc = ior(a, b)
-    acc = ishft(acc, 8)
-    acc = ishft(acc, -8)
+    a = ior(a, b)
   end subroutine r_or
 
-  subroutine r_xor(a, b, acc) ! acc = a ^ b
-    integer*2 :: a, b, acc
+  subroutine r_xor(a, b) ! a = a ^ b
+    integer*2 :: a, b
 
-    acc = ieor(a, b)
-    acc = ishft(acc, 8)
-    acc = ishft(acc, -8)
+    a = ieor(a, b)
   end subroutine r_xor
 
-  subroutine r_add(a, b, acc) ! acc = a + b
-    integer*2 :: a, b, acc
+  subroutine r_add(a, b) ! a = a + b
+    integer*2 :: a, b
 
-    acc = a + b
-
-    acc = ishft(acc, 8) ! get rid of half
-    acc = ishft(acc, -8)
+    a = a + b
+    a = iand(a, maxval)
   end subroutine r_add
 
-  subroutine r_sub(a, b, acc) ! acc = a - b
-    integer*2 :: a, b, acc, nb
+  subroutine r_sub(a, b) ! a = a - b
+    integer*2 :: a, b, nb
 
     nb = not(b) + 1 ! twos
-    acc = a + nb
-
-    acc = ishft(acc, 8)
-    acc = ishft(acc, -8)
+    a = a + nb
+    a = iand(a, maxval)
   end subroutine r_sub
 
   subroutine r_sh(acc, d, v) ! acc  = acc >> v
     integer*2 :: d, v, acc
 
     acc = ishft(acc, -((-1)**d)*(v))
-    acc = ishft(acc, 8)
-    acc = ishft(acc, -8)
+    acc = iand(acc, maxval)
   end subroutine r_sh
 end module alu
 
