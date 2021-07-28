@@ -1,11 +1,11 @@
-xor a, a
-ll loop
+la loop
 mov b, a ; loop address in b
-ll exit
+la exit
 mov c, a ; exit address in c
 xor a, a
 loop: inc
 jlz a, c
 jmp b
 exit: hlt
+
 

@@ -8,11 +8,12 @@ program rasm
   character(32) :: ins, ml
   character(32) :: op, a1, a2
   character(32) :: instructions(256) ! prog max 256
-  integer :: line, io, lines
+  integer :: line, io, lines, insnum, explen
   integer :: adr, bnk
 
   character(32) :: labels(32)
   integer :: ladr(32)
+  integer :: lbnk(32)
   integer :: li
 
   character(32) :: labelc
@@ -55,6 +56,21 @@ program rasm
      ins = trim(ins)
      instructions(line) = ins
 
+     call parse(ins, op, a1, a2)
+
+     if (op == "la") then
+        instructions(line) = "ll " // a1
+        line = line + 1
+        instructions(line) = "lh " // a1
+     end if
+     if (op == "shr") then
+        instructions(line) = "sh 0, " // a1
+        print *, instructions(line)
+     end if
+     if (op == "shl") then
+        instructions(line) = "sh 1, " // a1
+     end if
+
      bnk = ishft(line-1, -4)
      adr = line - ishft(bnk, 4) - 1
 
@@ -63,6 +79,7 @@ program rasm
      if (labelc /= "") then
         labels(li-1) = labelc
         ladr(li-1) = adr
+        lbnk(li-1) = bnk
      end if
 
      line = line + 1
@@ -71,20 +88,26 @@ program rasm
   lines = line - 1
   line = 1
   ins = ""
+  insnum = 1 ! instruction number
+  explen = 0 ! expansion length
   io = 0
 
   do while (line <= lines) ! instruction parsing
      ins = instructions(line)
 
-     bnk = ishft(line-1, -4)
-     adr = line - ishft(bnk, 4) - 1
+     bnk = ishft(insnum - 1, -4)
+     adr = insnum - ishft(bnk, 4) - 1
 
      call parse(ins, op, a1, a2)
 
      labeli = 1
      do while (labeli < li) ! label substitution
         if (a1 == labels(labeli)) then
-           a1 = itoc(ladr(labeli))
+           if (op == "lh") then ! label bank
+              a1 = itoc(lbnk(labeli))
+           else
+              a1 = itoc(ladr(labeli))
+           end if
         end if
         if (a2 == labels(labeli)) then
            a2 = itoc(ladr(labeli))
@@ -97,7 +120,9 @@ program rasm
      write(*, "(I4 ' | ' I2 ', '  I2 ' |  ' A10A)") line, bnk, adr, ml, ins
      write(9, "(A8)") ml
 
-     line = line + 1
+     line = line + 1 - explen
+     insnum = insnum + 1
+     explen = 0
   end do
 
   call cpu_time(end)
@@ -109,7 +134,7 @@ program rasm
 
   labeli = 1
   do while (labeli < li)
-     write(*, "(A10 ' = ' I4)") labels(labeli), ladr(labeli)
+     write(*, "(A10 ' = ' I4 ', ' I4)") labels(labeli), lbnk(labeli), ladr(labeli)
      labeli = labeli + 1
   end do
 
@@ -376,12 +401,6 @@ contains
        ml = "1111"
        ml = trim(ml) // trim(ctob1(a1))
        ml = trim(ml) // trim(ctob3(a2))
-    case ("shr") ! shift right
-       ml = "11110"
-       ml = trim(ml) // trim(ctob3(a1))
-    case ("shl") ! shift left
-       ml = "11111"
-       ml = trim(ml) // trim(ctob3(a1))
     case ("")
        ml = "00000000"
     case default

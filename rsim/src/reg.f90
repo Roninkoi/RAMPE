@@ -100,16 +100,16 @@ contains
   end subroutine r_mov
 
   subroutine r_ll(val, acc) ! load literal value to lower 4 bits
-    integer*2 :: val, acc, h
-    acc = ishft(acc, -4)
-    acc = ishft(acc, 4)
+    integer*2 :: val, acc, mask
+    mask = int(b'11110000')
+    acc = iand(acc, mask)
     acc = acc + val
   end subroutine r_ll
 
   subroutine r_lh(val, acc) ! load value to higher 4 bits
-    integer*2 :: val, acc, l
-    acc = ishft(acc, 4)
-    acc = ishft(acc, -4)
+    integer*2 :: val, acc, mask
+    mask = int(b'1111')
+    acc = iand(acc, mask)
     acc = ishft(val, 4) + acc
   end subroutine r_lh
 end module reg
