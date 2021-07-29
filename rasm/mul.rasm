@@ -1,6 +1,6 @@
-ll 6
+in
 mov b, a
-ll 5
+in
 mov c, a
 la return
 mov d, a

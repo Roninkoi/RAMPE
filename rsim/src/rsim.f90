@@ -1,11 +1,14 @@
 ! RSIM - RAKIAC simulator
 ! simulates the RAKIAC CPU in software
 ! capable of running machine language from RASM
-! command line use: rsim mode path
-! mode = integer 0-2 (0 = run from stdin,
-! 1 = run from file, 2 = single step from file,
-! 3 = slow run from file, 4 = run quietly from file)
-! path = relative path to .rexe executable
+! command line use: rsim mode file
+! mode = -s (single step), -c (clock), -q (run quietly)
+! file = relative path to .rexe executable
+! rsim (0 = run from stdin)
+! rsim file (1 = run from file)
+! rsim -s file (2 = single step from file)
+! rsim -c file (3 = run from file using clock)
+! rsim -q file (4 = run quietly from file)
 program rsim
   use sys
   use mem
@@ -30,14 +33,29 @@ program rsim
 
   argc = iargc()
 
-  if (argc < 1) then
-     print *, "Usage: rsim <mode> <program.rexe>"
-     return
-  endif
-
   call getarg(1, carg1)
   call getarg(2, carg2)
-  read(carg1, *) in
+
+  if (argc < 1) then
+     !print *, "Usage: rsim <mode> <program.rexe>"
+     in = 0
+  else if (argc == 1) then
+     in = 1
+     carg2 = carg1
+  else if (argc == 2) then
+     if (carg1 == "-s") then
+        in = 2
+     end if
+     if (carg1 == "-c") then
+        in = 3
+     end if
+     if (carg1 == "-q") then
+        in = 4
+     end if
+  end if
+  !print *, argc, carg1, carg2, in
+  !return
+
   fi = (in > 0)
   q = (in == 4)
 
@@ -45,7 +63,7 @@ program rsim
      if (.not. q) then
         write(*, "(A, A)") "Loading program ", carg2
      endif
-     
+
      call loadprog(trim(carg2))
   end if
 
@@ -54,6 +72,9 @@ program rsim
   if (.not. q) then
      write(*, "(A)") "Simulating RAKIAC..."
   endif
+
+  start = 0
+  end = 0
 
   do while (pc < pl .and. running == 1)
      if (in == 2) then ! single step
