@@ -132,24 +132,18 @@ contains
 
     implicit none
 
-    integer*2 :: ins, i, a1, a2, v, v1, v3
+    integer*2 :: ins, i, a1, a2, v, m2, m4
 
     integer*2, pointer :: rp1, rp2
 
     i = ishft(ins, -4) ! extract 4- bit
 
-    v = ishft(ins, 12) ! 4-bit
-    v = ishft(v, -12)
+    m4 = int(b'00001111')
+    v = iand(ins, m4) ! 4-bit
 
-    v1 = ishft(ins, 12) ! 1-bit
-    v1 = ishft(v1, -15)
-
-    v3 = ishft(ins, 13) ! 3-bit
-    v3 = ishft(v3, -13)
-
-    a1 = ishft(v, -2) ! 2-bit
-    a2 = ishft(v, 14)
-    a2 = ishft(a2, -14)
+    m2 = int(b'00000011')
+    a1 = ishft(v, -2)
+    a2 = iand(ins, m2)
 
     select case (ins) ! system codes
     case (int(b'00000000'))
@@ -218,7 +212,7 @@ contains
     case (int(b'1110'))
        call r_sub(rp1, rp2)
     case (int(b'1111'))
-       call r_sh(a, v1, v3)
+       call r_sh(rp2, a1)
     end select
 
     nullify(rp1) ! pointers to null

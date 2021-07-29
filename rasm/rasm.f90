@@ -61,6 +61,8 @@ program rasm
      bnk = ishft(line-1, -4)
      adr = line - ishft(bnk, 4) - 1
 
+     call label(ins, labelc, li) ! memory labeling
+     
      if (op == "la") then
         instructions(line) = "ll " // a1
         line = line + 1
@@ -171,13 +173,11 @@ program rasm
         instructions(line) = "sto d, a"
      end if
      if (op == "shr") then
-        instructions(line) = "sh 0, " // a1
-     end if
-     if (op == "shl") then
         instructions(line) = "sh 1, " // a1
      end if
-
-     call label(ins, labelc, li) ! memory labeling
+     if (op == "shl") then
+        instructions(line) = "sh 2, " // a1
+     end if
 
      if (labelc /= "") then
         labels(li-1) = labelc
@@ -502,8 +502,8 @@ contains
        ml = trim(ml) // trim(rtob2(a2))
     case ("sh")
        ml = "1111"
-       ml = trim(ml) // trim(ctob1(a1))
-       ml = trim(ml) // trim(ctob3(a2))
+       ml = trim(ml) // trim(ctob2(a1))
+       ml = trim(ml) // trim(rtob2(a2))
     case ("")
        ml = "00000000"
     case default

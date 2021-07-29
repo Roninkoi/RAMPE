@@ -68,11 +68,23 @@ contains
     a = iand(a, maxval)
   end subroutine r_sub
 
-  subroutine r_sh(acc, d, v) ! acc  = acc >> v
-    integer*2 :: d, v, acc
+  subroutine r_sh(a, v) ! acc  = acc >> v
+    integer*2 :: a, v, s
 
-    acc = ishft(acc, -((-1)**d)*(v))
-    acc = iand(acc, maxval)
+    s = 0
+    select case (v)
+       case (0)
+          s = -2
+       case (1)
+          s = -1
+       case (2)
+          s = 1
+       case (3)
+          s = 2
+    end select
+
+    a = ishft(a, s)
+    a = iand(a, maxval)
   end subroutine r_sh
 end module alu
 
