@@ -178,6 +178,12 @@ program rasm
      if (op == "shl") then
         instructions(line) = "sh 2, " // a1
      end if
+     if (op == "shrr") then
+        instructions(line) = "sh 0, " // a1
+     end if
+     if (op == "shll") then
+        instructions(line) = "sh 3, " // a1
+     end if
 
      if (labelc /= "") then
         labels(li-1) = labelc

@@ -1,0 +1,38 @@
+RAKIAC console
+
+0 = light
+| = switch
+O = button
+
+Status
+
+  0     0     0     0     0     0
+ PWR   RUN   HLT    OF    IN   OUT
+
+Registers
+
+    128 64  32  16  8   4   2   1
+ A  0   0   0   0   0   0   0   0    128 Decimal
+    |   |   |   |   |   |   |   |    O Enter
+    
+ B  0   0   0   0   0   0   0   0
+ 
+ C  0   0   0   0   0   0   0   0
+ 
+ D  0   0   0   0   0   0   0   0
+
+                                     O Start (light when running)
+						 
+PC  0   0   0   0   0   0   0   0    O Halt (light when stopped)
+
+IR  0   0   0   0   0   0   0   0    O Step (light when press)
+
+Instruction
+
+FLOW:      0      0      0
+          JMP    JEZ    JLZ
+MEM:  0     0     0     0     0
+     MOV   STO    LD    LL    LH
+ALU:  0   0   0   0   0   0   0
+     NOT AND  OR XOR ADD SUB  SH
+

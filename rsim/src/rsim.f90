@@ -27,11 +27,13 @@ program rsim
   logical :: fi, q
   logical :: jumping
 
-  real :: start, end
+  real :: start, end, clockspd
 
   integer :: argc
 
   argc = iargc()
+
+  clockspd = 50
 
   call getarg(1, carg1)
   call getarg(2, carg2)
@@ -82,7 +84,7 @@ program rsim
      end if
      if (in == 3) then
         call cpu_time(start)
-        do while (end - start < 1.0/10.0) ! 10 Hz clock
+        do while (end - start < 1.0/clockspd) ! clockspd Hz clock
            call cpu_time(end)
         end do
      end if

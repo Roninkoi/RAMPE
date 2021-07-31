@@ -2,7 +2,7 @@ RAKIAC INSTRUCTION SET ARCHITECTURE
 -----------------------------------
 
 The RAKIAC ISA is a RISC-style, small architecture that
-has about 30 instructions. Everything has been designed 
+has about 20 instructions. Everything has been designed 
 to fit into 8 bits, from the registers to memory addresses.
 
 REGISTERS:
@@ -81,8 +81,20 @@ Assembler:
 shr <reg>
 ; sh 1, <reg>
 
+shrr <reg>
+; sh 0, <reg>
+
 shl <reg>
 ; sh 2, <reg>
+
+shll <reg>
+; sh 3, <reg>
+
+in
+; hlt
+
+out
+; hlt
 
 ja <label> ; jump to label address
 ; ll <label>
