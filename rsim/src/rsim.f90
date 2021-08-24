@@ -33,7 +33,7 @@ program rsim
 
   argc = iargc()
 
-  clockspd = 50
+  clockspd = 10
 
   call getarg(1, carg1)
   call getarg(2, carg2)

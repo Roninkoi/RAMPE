@@ -1,4 +1,4 @@
-# RAKIAC - Relay-Architectured Keeper of Information And Calculator
+# RAKIAC - Relay-Architectured Keeper of Information and Automatic Computer
 
 The RAKIAC is a relay computer with a simple custom ISA.
 The purpose of this project is to explore early computing and CPU design.
