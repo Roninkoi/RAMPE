@@ -4,6 +4,8 @@ RAKIAC console
 | = switch
 O = button
 
+     O Start     O Step      O Halt   
+
 Status
 
   0     0     0     0     0     0
@@ -12,8 +14,8 @@ Status
 Registers
 
     128 64  32  16  8   4   2   1
- A  0   0   0   0   0   0   0   0    128 Decimal
-    |   |   |   |   |   |   |   |    O Enter
+ A  0   0   0   0   0   0   0   0   128 Decimal
+    |   |   |   |   |   |   |   |   O Enter
     
  B  0   0   0   0   0   0   0   0
  
@@ -21,11 +23,11 @@ Registers
  
  D  0   0   0   0   0   0   0   0
 
-                                     O Start (light when running)
-						 
-PC  0   0   0   0   0   0   0   0    O Halt (light when stopped)
 
-IR  0   0   0   0   0   0   0   0    O Step (light when press)
+						 
+PC  0   0   0   0   0   0   0   0
+
+IR  0   0   0   0   0   0   0   0
 
 Instruction
 
