@@ -47,8 +47,8 @@ system:
 
 8  (8)       inc                ; increment accumulator
 9  (8)       dec                ; decrement accumulator
-10 (8)
-11 (8)
+10 (8)       get                ; get from memory here (ld a, pc)
+11 (8)       put                ; put to memory here (sto a, pc)
 12 (8)
 13 (8)
 14 (8)       in			  ; read value into a from stdin (simulator)
@@ -180,8 +180,8 @@ MACHINE CODES:
 
 0000 1000 inc
 0000 1001 dec
-0000 1010
-0000 1011
+0000 1010 get
+0000 1011 put
 0000 1100
 0000 1101
 0000 1110 in

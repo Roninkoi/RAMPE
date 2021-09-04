@@ -3,8 +3,6 @@
 The RAKIAC is a relay computer with a simple custom ISA.
 The purpose of this project is to explore early computing and CPU design.
 
-The architecture is going to change substatially as the number of components is optimized.
-
 Included are the RASM assembler and RSIM simulator. Both are written in Fortran.
 
 ## Assembler
@@ -81,6 +79,8 @@ v = value, a = address, r = register
 | ----------- | ------- |
 | nop | no operation |
 | hlt | halt |
+| get | pc address to acc |
+| put | acc to pc address |
 | in | read |
 | out | print |
 | inc | increment acc |
