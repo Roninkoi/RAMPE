@@ -1,7 +1,7 @@
 ! RSIM - RAKIAC simulator
 ! simulates the RAKIAC CPU in software
 ! capable of running machine language from RASM
-! command line use: rsim mode file
+! command line use: rsim <mode> <file>
 ! mode = -s (single step), -c (clock), -q (run quietly)
 ! file = relative path to .rexe executable
 ! rsim (0 = run from stdin)
@@ -33,7 +33,7 @@ program rsim
 
   argc = iargc()
 
-  clockspd = 50
+  clockspd = 10
 
   call getarg(1, carg1)
   call getarg(2, carg2)

@@ -9,7 +9,7 @@ Included are the RASM assembler and RSIM simulator. Both are written in Fortran.
 
 ## Assembler
 
-Usage: rasm input.rasm output.rexe
+Usage: rasm <input.rasm> <output.rexe>
 
 ```
    1 |  0,  0 |  11000000  xor a, a                        
@@ -27,7 +27,19 @@ Usage: rasm input.rasm output.rexe
 
 ## Simulator
 
-Usage: rsim mode program.rexe
+Usage: rsim <mode> <program.rexe>
+
+rsim = run from stdin
+
+rsim <file> = run from file
+
+Modes:
+
+-s = single step from file (press enter)
+
+-c = slow run from file (10 Hz clock)
+
+-q = quietly run from file (only out instructions)
 
 ```
 ticks: 0
@@ -46,18 +58,6 @@ d:   00000000 (0)
 ir:  01110110 (118)
 pc:  00000010 (2)
 ```
-
-#### Modes:
-
-0 = run from stdin
-
-1 = run from file
-
-2 = single step from file (press enter)
-
-3 = slow run from file (10 Hz clock)
-
-4 = quietly run from file (only out instructions)
 
 ## Registers
 
