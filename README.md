@@ -7,7 +7,7 @@ Included are the RASM assembler and RSIM simulator. Both are written in Fortran.
 
 ## Assembler
 
-Usage: rasm <input.rasm> <output.rexe>
+Usage: `rasm <input.rasm> <output.rexe>`
 
 ```
    1 |  0,  0 |  11000000  xor a, a                        
@@ -25,11 +25,11 @@ Usage: rasm <input.rasm> <output.rexe>
 
 ## Simulator
 
-Usage: rsim <mode> <program.rexe>
+Usage: `rsim <mode> <program.rexe>`
 
-rsim = run from stdin
+`rsim` = run from stdin
 
-rsim <file> = run from file
+`rsim <file>` = run from file
 
 Modes:
 
