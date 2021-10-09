@@ -73,4 +73,16 @@ contains
 
     a = fetch(b)
   end subroutine r_ld
+
+  subroutine r_get(a, pc)
+    integer*2 :: a, pc
+
+    a = fetch(pc)
+  end subroutine r_get
+
+  subroutine r_set(a, pc)
+    integer*2 :: a, pc
+
+    call iwrite(pc, a)
+  end subroutine r_set
 end module mem

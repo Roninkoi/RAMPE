@@ -80,7 +80,7 @@ v = value, a = address, r = register
 | nop | no operation |
 | hlt | halt |
 | get | pc address to acc |
-| put | acc to pc address |
+| set | acc to pc address |
 | in | read |
 | out | print |
 | inc | increment acc |

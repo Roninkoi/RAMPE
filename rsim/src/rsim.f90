@@ -96,14 +96,17 @@ program rsim
         ir = fetch(pc) ! instruction
      else
         read(*, *) si ! from stdin
-        call swrite(pc, si) ! write to mem
-        ir = fetch(pc) ! instruction
+        !call swrite(pc, si) ! write to mem
+        !ir = fetch(pc) ! instruction
+        read(si, "(B8.8)") ir
      end if
-
-     pc = pc + 1 ! inc pc
 
      ! instruction decoding
      call decode(ir) ! magic here
+
+     if (.not. jumping) then
+        pc = pc + 1 ! inc pc
+     end if
 
      ! cpu simulation end
 
@@ -138,6 +141,8 @@ contains
 
     integer*2, pointer :: rp1, rp2
 
+    jumping = .false.
+
     i = ishft(ins, -4) ! extract 4- bit
 
     m4 = int(b'00001111')
@@ -156,6 +161,10 @@ contains
        call r_inc(a)
     case (int(b'00001001'))
        call r_dec(a)
+    case (int(b'00001010'))
+       call r_get(a, pc)
+    case (int(b'00001011'))
+       call r_set(a, pc)
     case (int(b'00001110'))
        call r_in(a)
     case (int(b'00001111'))
@@ -186,10 +195,13 @@ contains
 
     select case (i) ! instruction code
     case (int(b'0001'))
+       jumping = .true.
        call r_jmp(rp1, pc)
     case (int(b'0010'))
+       jumping = .true.
        call r_jez(rp1, rp2, pc)
     case (int(b'0011'))
+       jumping = .true.
        call r_jlz(rp1, rp2, pc)
     case (int(b'0100'))
        call r_mov(rp1, rp2)

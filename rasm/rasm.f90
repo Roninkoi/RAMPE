@@ -444,10 +444,14 @@ contains
        ml = "00000000"
     case ("hlt")
        ml = "00000001"
-    case ("inc") ! increment
+    case ("inc")
        ml = "00001000"
-    case ("dec") ! decrement
+    case ("dec")
        ml = "00001001"
+    case ("get")
+       ml = "00001010"
+    case ("set")
+       ml = "00001011"
     case ("in")
        ml = "00001110"
     case ("out")

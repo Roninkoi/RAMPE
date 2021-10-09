@@ -19,7 +19,7 @@ Registers
     128 64  32  16  8   4   2   1
  A  0   0   0   0   0   0   0   0   
     |   |   |   |   |   |   |   |   
-    O Enter  O jmp a   O get    O put
+    O Enter  O jmp     O get    O set
     
  B  0   0   0   0   0   0   0   0
  

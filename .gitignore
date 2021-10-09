@@ -1,4 +1,6 @@
 golf
 **.mod
 out.rmem
+rasm/rasm
+rsim/rsim
 
