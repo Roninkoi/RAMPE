@@ -111,7 +111,7 @@ program rsim
      ! cpu simulation end
 
      if (.not. q) then
-        write(*, "('cycles: ' I0)") t
+        write(*, "('cycle: ' I0)") (t+1)
 
         if (checkof()) then
            print *, "Overflow!"
