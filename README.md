@@ -27,7 +27,7 @@ Usage: `rasm <input.rasm> <output.rexe>`
 
 Usage: `rsim <mode> <program.rexe>`
 
-`rsim` = run from stdin
+`rsim` = run instructions from stdin
 
 `rsim <file>` = run from file
 

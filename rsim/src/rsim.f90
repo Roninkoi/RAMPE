@@ -25,7 +25,7 @@ program rsim
   character(16) :: si
   integer :: in = 0
   logical :: fi, q
-  logical :: jumping
+  logical :: jumping = .false.
 
   real :: start, end, clockspd
 
@@ -141,8 +141,6 @@ contains
 
     integer*2, pointer :: rp1, rp2
 
-    jumping = .false.
-
     i = ishft(ins, -4) ! extract 4- bit
 
     m4 = int(b'00001111')
@@ -193,16 +191,15 @@ contains
        rp2 => d
     end select
 
+    jumping = .false.
+    
     select case (i) ! instruction code
     case (int(b'0001'))
-       jumping = .true.
-       call r_jmp(rp1, pc)
+       jumping = r_jmp(rp1, pc)
     case (int(b'0010'))
-       jumping = .true.
-       call r_jez(rp1, rp2, pc)
+       jumping = r_jez(rp1, rp2, pc)
     case (int(b'0011'))
-       jumping = .true.
-       call r_jlz(rp1, rp2, pc)
+       jumping = r_jlz(rp1, rp2, pc)
     case (int(b'0100'))
        call r_mov(rp1, rp2)
     case (int(b'0101'))
