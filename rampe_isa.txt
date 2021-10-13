@@ -1,7 +1,7 @@
-RAKIAC INSTRUCTION SET ARCHITECTURE
+RAMPE INSTRUCTION SET ARCHITECTURE
 -----------------------------------
 
-The RAKIAC ISA is a RISC-style, small architecture that
+The RAMPE ISA is a RISC-style, small architecture that
 has about 20 instructions. Everything has been designed 
 to fit into 8 bits, from the registers to memory addresses.
 

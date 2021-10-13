@@ -1,4 +1,4 @@
-RAKIAC console
+RAMPE console
 
 0 = light
 | = switch

@@ -1,6 +1,6 @@
-# RAKIAC - Relay-Architectured Keeper of Information and Automatic Computer
+# RAMPE - Relay-Architectured Memorizer, Processor and Enumerator
 
-The RAKIAC is a relay computer with a simple custom ISA.
+The RAMPE is a relay computer with a simple custom ISA.
 The purpose of this project is to explore early computing and CPU design.
 
 Included are the RASM assembler and RSIM simulator. Both are written in Fortran.

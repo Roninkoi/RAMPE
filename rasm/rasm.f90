@@ -1,5 +1,5 @@
-! RASM - RAKIAC assembler
-! translates RASM into RAKIAC machine language
+! RASM - RAMPE assembler
+! translates RASM into RAMPE machine language
 ! command line use: rasm input.rasm output.rexe
 program rasm
   implicit none

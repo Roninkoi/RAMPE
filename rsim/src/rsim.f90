@@ -1,5 +1,5 @@
-! RSIM - RAKIAC simulator
-! simulates the RAKIAC CPU in software
+! RSIM - RAMPE simulator
+! simulates the RAMPE CPU in software
 ! capable of running machine language from RASM
 ! command line use: rsim <mode> <file>
 ! mode = -s (single step), -c (clock), -q (run quietly)
@@ -72,7 +72,7 @@ program rsim
   call initreg()
 
   if (.not. q) then
-     write(*, "(A)") "Simulating RAKIAC..."
+     write(*, "(A)") "Simulating RAMPE..."
   endif
 
   start = 0
