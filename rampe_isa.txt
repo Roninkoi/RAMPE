@@ -123,22 +123,22 @@ jlb <label> ; jump to label if b < 0
 ; lh <label>
 ; jlz b, a
 
-jeb <label> ; jump to label if c == 0
+jec <label> ; jump to label if c == 0
 ; ll <label>
 ; lh <label>
 ; jez c, a
 
-jlb <label> ; jump to label if c < 0
+jlc <label> ; jump to label if c < 0
 ; ll <label>
 ; lh <label>
 ; jlz c, a
 
-jeb <label> ; jump to label if d == 0
+jed <label> ; jump to label if d == 0
 ; ll <label>
 ; lh <label>
 ; jez d, a
 
-jlb <label> ; jump to label if d < 0
+jld <label> ; jump to label if d < 0
 ; ll <label>
 ; lh <label>
 ; jlz d, a
