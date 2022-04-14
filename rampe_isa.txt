@@ -11,7 +11,7 @@ size  name  purpose
 
 8     a     accumulator, register 0 (00)
 8     b     general purpose register 1 (01)
-8     c     accumulator, register 2 (10)
+8     c     general purpose register 2 (10)
 8     d     general purpose register 3 (11)
 
 8     pc    program counter
