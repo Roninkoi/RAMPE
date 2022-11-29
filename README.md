@@ -85,7 +85,7 @@ v = value, a = address, r = register
 | out | print |
 | inc | increment acc |
 | dec | decrement acc |
-| jmp r, r | jump |
+| jmp r | jump |
 | jez r, r | jump if register equals zero |
 | jlz r, r | jump if register less than zero |
 | mov r, r | move register to register |
@@ -100,3 +100,23 @@ v = value, a = address, r = register
 | add r, r | addition |
 | sub r, r | subtraction |
 | sh v, v | logical shift |
+
+## Assembler pseudoinstructions
+
+l = label
+
+| Instruction | Purpose |
+| ----------- | ------- |
+| ja l | jump to label address |
+| jea l | jump to label if a equals zero |
+| jla l | jump to label if a less than zero |
+| la l | load label into a |
+| lda l | load from label address into a |
+| sta l | store from a into label address |
+| shr r | shift right |
+| shrr r | shift right twice |
+| shl r | shift left |
+| shll r | shift left twice |
+
+Other registers have corresponding instructions such as jeb, jlb, ldb, stb for b register.
+
