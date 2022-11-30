@@ -20,12 +20,11 @@ Usage: `rasm <input.rasm> <output.rexe>`
    8 |  0,  7 |  00110010  jlz a, c                        
    9 |  0,  8 |  00010100  jmp b                           
   10 |  0,  9 |  00000001  exit: hlt                       
-  11 |  0, 10 |  00000000                                  
 ```
 
 ## Simulator
 
-Usage: `rsim <mode> <program.rexe>`
+Usage: `rsim [mode] [program.rexe]`
 
 `rsim` = run instructions from stdin
 
@@ -40,15 +39,14 @@ Modes:
 -q = quietly run from file (only out instructions)
 
 ```
-ticks: 0
+cycle: 0
 a:   00000000 (0)
 b:   00000000 (0)
 c:   00000000 (0)
 d:   00000000 (0)
 ir:  11000000 (192)
 pc:  00000001 (1)
-
-ticks: 1
+cycle: 1
 a:   00000110 (6)
 b:   00000000 (0)
 c:   00000000 (0)
@@ -81,6 +79,7 @@ v = value, a = address, r = register
 | hlt | halt |
 | get | pc address to acc |
 | set | acc to pc address |
+| (sw) | switch memory bank (if used) and jump |
 | in | read |
 | out | print |
 | inc | increment acc |
@@ -107,10 +106,12 @@ l = label
 
 | Instruction | Purpose |
 | ----------- | ------- |
+| la l | load label address into a |
+| (lb l) | load label bank into a |
+| (lba l) | load label bank and address into b and a |
 | ja l | jump to label address |
 | jea l | jump to label if a equals zero |
 | jla l | jump to label if a less than zero |
-| la l | load label into a |
 | lda l | load from label address into a |
 | sta l | store from a into label address |
 | shr r | shift right |
