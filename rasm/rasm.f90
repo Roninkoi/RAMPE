@@ -263,7 +263,6 @@ program rasm
      adr = insnum - 1 - ishft(adrh, 4) - ishft(bnk, 8) - ishft(bnkh, 12)
      
      call parse(ins, op, a1, a2)
-     print *, a1, a2
 
      labeli = 1
      do while (labeli < li) ! label substitution
