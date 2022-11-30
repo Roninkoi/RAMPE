@@ -236,6 +236,10 @@ program rasm
         instructions(line) = op
      end if
 
+     if (len(trim(op)) == 0) then ! remove empty lines
+        line = line - 1
+     end if
+
      if (labelc /= "") then
         labels(li-1) = labelc
         ladrh(li-1) = adrh
