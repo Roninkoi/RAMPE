@@ -2,16 +2,20 @@ in ; read first operand
 mov b, a
 in ; read second operand
 mov c, a
+
 la return
 mov d, a ; load return address and put into d
 ja mul ; jump to subroutine mul
-return: mov a, b
+
+return: mov a, b ; return from mul
 out
 hlt
-mulreturn: ; b * c, return to d with result in b
+
+mulreturn: nop ; memory location for return address
+; multiply b * c, return to d with result in b
 mul: jez b, d ; either operand zero
 jez c, d
-std mulreturn ; return address
+std mulreturn ; save return address
 mov d, b ; d is counter
 xor b, b
 mulloop: add b, c ; repeated addition of c
@@ -21,3 +25,4 @@ mov d, a
 lda mulreturn ; load return address
 jez d, a ; return?
 ja mulloop ; add again
+
