@@ -1,0 +1,37 @@
+in ; read in value
+mov c, a
+
+la r1
+mov d, a ; save return address
+mov b, c ; retrieve input
+ja rotr ; jump to rotr subroutine
+r1: out
+
+la r2
+mov d, a ; save return address
+mov b, c ; retrieve input
+ja rotl ; jump to rotl subroutine
+r2: out
+
+hlt
+
+; rotate b right, return to d with result in a
+rotr: mov a, b
+shr a ; a >> 1
+shll b ; b << 7 
+shll b
+shll b
+shl b ; msb remains
+or a, b ; stick msb to end
+jmp d
+
+; rotate b left, return to d with result in a
+rotl: mov a, b
+shl a ; a << 1
+shrr b ; b >> 7 
+shrr b
+shrr b
+shr b ; lsb remains
+or a, b ; stick lsb to end
+jmp d
+
