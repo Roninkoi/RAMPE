@@ -49,7 +49,7 @@ system:
 9  (8)       dec                ; decrement accumulator
 10 (8)       get                ; get from memory here (ld a, pc)
 11 (8)       set                ; set memory here (sto a, pc)
-12 (8)       (sw)               ; optional: switch bank to b and jump to a
+12 (8)       sw                 ; optional: switch bank to b and jump to a
 
 14 (8)       in                 ; read value into a from stdin (simulator)
 15 (8)       out                ; outputs/prints the value of a to stdout (simulator)
@@ -76,19 +76,24 @@ logic and math:
 30 (4, 2, 2) sh <val> <reg>     ; reg = sh(reg, val), val = right: 0 (-2), 1 (-1) left: 2 (+1), 3 (+2)
 
 Assembler:
-<label>: ; label
+<label>: ; define label
+<label>  ; label address
+@<label> ; label bank
 
-shr <reg>
-; sh 1, <reg>
+la <label> ; load label address into a
+; ll <label>
+; lh <label>
 
-shrr <reg>
-; sh 0, <reg>
+lb <label> ; load label bank into a
+; ll @<label>
+; lh @<label>
 
-shl <reg>
-; sh 2, <reg>
-
-shll <reg>
-; sh 3, <reg>
+lba <label> ; load label bank and address into b and a
+; ll @<label>
+; lh @<label>
+; mov b, a
+; ll <label>
+; lh <label>
 
 ja <label> ; jump to label address
 ; ll <label>
@@ -137,10 +142,6 @@ jld <label> ; jump to label if d < 0
 ; lh <label>
 ; jlz d, a
 
-la <label> ; load label into a
-; ll <label>
-; lh <label>
-
 lda <label> ; load a from label address
 ; ll <label>
 ; lh <label>
@@ -182,6 +183,18 @@ std <label> ; store d to label address
 ; lh <label>
 ; sto d, a
 
+shr <reg> ; shift right
+; sh 1, <reg>
+
+shrr <reg> ; shift right twice
+; sh 0, <reg>
+
+shl <reg> ; shift left
+; sh 2, <reg>
+
+shll <reg> ; shift left twice
+; sh 3, <reg>
+
 MACHINE CODES:
 
 0000 0000 nop
@@ -191,7 +204,7 @@ MACHINE CODES:
 0000 1001 dec
 0000 1010 get
 0000 1011 set
-0000 1100 (sw)
+0000 1100 sw
 0000 1101
 0000 1110 in
 0000 1111 out

@@ -79,7 +79,7 @@ v = value, a = address, r = register
 | hlt | halt |
 | get | pc address to acc |
 | set | acc to pc address |
-| (sw) | switch memory bank (if used) and jump |
+| sw | switch memory bank and jump |
 | in | read |
 | out | print |
 | inc | increment acc |
@@ -107,8 +107,8 @@ l = label
 | Instruction | Purpose |
 | ----------- | ------- |
 | la l | load label address into a |
-| (lb l) | load label bank into a |
-| (lba l) | load label bank and address into b and a |
+| lb l | load label bank into a |
+| lba l | load label bank and address into b and a |
 | ja l | jump to label address |
 | jea l | jump to label if a equals zero |
 | jla l | jump to label if a less than zero |
