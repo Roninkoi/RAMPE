@@ -4,18 +4,20 @@
 program rasm
   implicit none
 
+  integer, parameter :: pl = 65536 ! program length
   character(16) :: carg1, carg2
   character(32) :: ins, ml
-  character(32) :: op, a1, a2
-  character(32) :: instructions(65536) ! prog max size
+  character(32) :: op, a1, a2 ! opcode, args
+  character(32) :: instructions(pl) ! program
+  integer :: val
   integer :: line, io, lines, insnum, explen
-  integer :: adr, adrh, bnk, bnkh
+  integer :: adr, adrh, bnk, bnkh ! address, bank
 
-  character(32) :: labels(32)
-  integer :: ladr(32)
-  integer :: ladrh(32)
-  integer :: lbnk(32)
-  integer :: lbnkh(32)
+  character(32) :: labels(pl) ! list of labels
+  integer :: ladr(pl) ! low address label
+  integer :: ladrh(pl) ! high address label
+  integer :: lbnk(pl) ! low bank label
+  integer :: lbnkh(pl) ! high bank label
   integer :: li
 
   character(32) :: labelc
@@ -224,6 +226,14 @@ program rasm
      end if
      if (op == "shll") then
         instructions(line) = "sh 3, " // a1
+     end if
+
+     ! read op as integer
+     read(op, '(I8)', iostat=io) val
+     ! if valid decimal, convert to binary
+     if (io == 0 .and. len(trim(op)) < 8) then
+        write(op, "(B8.8)") val
+        instructions(line) = op
      end if
 
      if (labelc /= "") then

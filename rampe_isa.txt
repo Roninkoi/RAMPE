@@ -34,6 +34,7 @@ Comments begin with ";", labels use ":". Comments and labels
 are ignored, so they become nops if on an empty line. Operands
 can be separated with "," e.g. "add a, b". Binary can be inserted
 inside assembly programs, and this will get loaded directly to memory.
+Valid decimal numbers in assembly programs will get converted to binary.
 
 al = accumulator low 4 bits
 ah = accumulator high 4 bits
