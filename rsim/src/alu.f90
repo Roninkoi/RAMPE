@@ -33,6 +33,7 @@ contains
     integer*2 :: a
 
     a = not(a)
+    a = iand(a, maxval)
   end subroutine r_not
 
   subroutine r_and(a, b) ! a = a & b
