@@ -231,7 +231,7 @@ program rasm
      ! read op as integer
      read(op, '(I8)', iostat=io) val
      ! if valid decimal, convert to binary
-     if (io == 0 .and. len(trim(op)) < 8) then
+     if (io == 0 .and. len(trim(op)) < 8 .and. len(trim(op)) > 0) then
         write(op, "(B8.8)") val
         instructions(line) = op
      end if
@@ -261,7 +261,7 @@ program rasm
      bnk = ishft(insnum-1, -8) - ishft(bnkh, 4)
      adrh = ishft(insnum-1, -4) - ishft(bnk, 4) - ishft(bnkh, 8)
      adr = insnum - 1 - ishft(adrh, 4) - ishft(bnk, 8) - ishft(bnkh, 12)
-     
+
      call parse(ins, op, a1, a2)
 
      labeli = 1
@@ -430,8 +430,9 @@ contains
     character(32) :: b
     integer :: i
 
-    read(c, *) i
-    write(b, "(B4.4)") i   
+    read(c, *, iostat=io) i
+    if (io /= 0) print *, "Invalid binary:", c
+    write(b, "(B4.4)") i
   end function ctob4
 
   function ctob3(c) result(b) ! char to bit 3
@@ -439,8 +440,9 @@ contains
     character(32) :: b
     integer :: i
 
-    read(c, *) i
-    write(b, "(B3.3)") i   
+    read(c, *, iostat=io) i
+    write(b, "(B3.3)") i
+    if (io /= 0) print *, "Invalid binary:", c
   end function ctob3
 
   function ctob2(c) result(b) ! char to bit 2
@@ -448,7 +450,8 @@ contains
     character(32) :: b
     integer :: i
 
-    read(c, *) i
+    read(c, *, iostat=io) i
+    if (io /= 0) print *, "Invalid binary:", c
     write(b, "(B2.2)") i   
   end function ctob2
 
@@ -457,7 +460,8 @@ contains
     character(32) :: b
     integer :: i
 
-    read(c, *) i
+    read(c, *, iostat=io) i
+    if (io /= 0) print *, "Invalid binary:", c
     write(b, "(B1.1)") i   
   end function ctob1
 
@@ -466,7 +470,8 @@ contains
     integer :: b
     integer :: i
 
-    read(c, *) i
+    read(c, *, iostat=io) i
+    if (io /= 0) print *, "Invalid integer:", c
     b = i
   end function ctoi
 
@@ -493,6 +498,8 @@ contains
        b = "10"
     case ("d")
        b = "11"
+    case default
+       print *, "Couldn't find register:", r
     end select
   end function rtob2
 
