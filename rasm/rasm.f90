@@ -291,6 +291,11 @@ program rasm
      end do
 
      ml = ops(op, a1, a2) ! machine translation
+     
+     read(ml, '(B8)', iostat=io) val
+     if (io /= 0 .or. len(trim(ml)) /= 8) then
+        print *, "Not a valid instruction:", ml
+     end if
 
      write(*, "(I5 ' | ' I2 ', ' I2 ', ' I2 ', ' I2 ' | ' A10A)") line, bnkh, bnk, adrh, adr, ml, ins
      write(9, "(A8)") ml
