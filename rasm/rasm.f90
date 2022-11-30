@@ -477,7 +477,7 @@ contains
   function ctoi(c) result(b) ! char to integer
     character(32) :: c
     integer :: b
-    integer :: i
+    integer :: i = 0
 
     read(c, *, iostat=io) i
     if (io /= 0) print *, "Invalid integer:", c
@@ -485,7 +485,7 @@ contains
   end function ctoi
 
   function itoc(i) result(b) ! integer to char
-    character(32) :: c
+    character(32) :: c = ""
     character(32) :: b
     integer :: i
 

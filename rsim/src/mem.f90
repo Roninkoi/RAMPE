@@ -47,8 +47,12 @@ contains
     integer*2 :: i
     integer*2 :: c = 0
     integer*2 :: fetch
+    integer :: io
 
-    read(p(bank*bl + i), "(B8.8)") c
+    read(p(bank*bl + i), "(B8.8)", iostat=io) c
+    if (io /= 0) then
+       print *, "Bad instruction:", p(bank*bl + i)
+    end if
     fetch = c
     return
   end function fetch
