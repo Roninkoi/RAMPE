@@ -1,13 +1,13 @@
 ! RASM - RAMPE assembler
 ! translates RASM into RAMPE machine language
-! command line use: rasm input.rasm output.rexe
+! command line use: rasm <input.rasm> <output.rexe>
 program rasm
   implicit none
 
   character(16) :: carg1, carg2
   character(32) :: ins, ml
   character(32) :: op, a1, a2
-  character(32) :: instructions(256) ! prog max 256
+  character(32) :: instructions(65536) ! prog max size
   integer :: line, io, lines, insnum, explen
   integer :: adr, bnk
 
@@ -452,6 +452,8 @@ contains
        ml = "00001010"
     case ("set")
        ml = "00001011"
+    case ("sw")
+       ml = "00001100"
     case ("in")
        ml = "00001110"
     case ("out")

@@ -50,4 +50,13 @@ contains
     end if
     r_jlz = jumping
   end function r_jlz
+  
+  logical function r_sw(a, b, bank, pc) ! switch bank
+    integer*2 :: a, b, bank, pc
+
+    bank = b
+    pc = a
+
+    r_sw = .true.
+  end function r_sw
 end module sys

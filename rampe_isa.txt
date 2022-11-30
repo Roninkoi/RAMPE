@@ -19,12 +19,12 @@ size  name  purpose
 
 MEMORY:
 
-Unified memory for both data and program. 8-bit bytes,
-single address holds a byte of data. Address space 2**8.
-16 banks, 16 bytes per memory bank.
+Unified memory for both data and program. Memory consists of 8-bit bytes,
+each address holds a byte of data. Address space 2^8 = 256 bytes.
 
-total max:
-256 bytes = 2048 bits
+The total memory can be extended by introducing an additional 8-bit memory bank
+address. The total amount of memory would then be increased to 2^16 = 65536
+bytes. Switching between memory banks would be done using the sw instruction.
 
 INSTRUCTIONS:
 
@@ -35,23 +35,23 @@ are ignored, so they become nops if on an empty line. Operands
 can be separated with "," e.g. "add a, b". Binary can be inserted
 inside assembly programs, and this will get loaded directly to memory.
 
-a = accumulator
 al = accumulator low 4 bits
 ah = accumulator high 4 bits
+address(reg) = contents of memory at address in reg
 
-i  size = 8  mnemonic <args>   translation
+i  size = 8  mnemonic <args>    translation
 
 system:
-0 (8)        nop                ; idle (empty lines/comments)
-1 (8)        hlt                ; stop execution
+0  (8)       nop                ; idle (empty lines/comments)
+1  (8)       hlt                ; stop execution
 
 8  (8)       inc                ; increment accumulator
 9  (8)       dec                ; decrement accumulator
 10 (8)       get                ; get from memory here (ld a, pc)
 11 (8)       set                ; set memory here (sto a, pc)
-12 (8)
-13 (8)
-14 (8)       in			  ; read value into a from stdin (simulator)
+12 (8)       (sw)               ; optional: switch bank to b and jump to a
+
+14 (8)       in                 ; read value into a from stdin (simulator)
 15 (8)       out                ; outputs/prints the value of a to stdout (simulator)
 
 flow:
@@ -63,7 +63,7 @@ memory:
 19 (4, 2, 2) mov <reg1> <reg2>  ; reg1 = reg2
 20 (4, 4)    sto <reg1> <reg2>  ; address(reg2) = reg1
 21 (4, 4)    ld <reg1> <reg2>   ; reg1 = address(reg2)
-20 (4, 4)    ll <val> 		  ; al = val
+20 (4, 4)    ll <val>           ; al = val
 23 (4, 4)    lh <val>           ; ah = val
 
 logic and math:
@@ -89,12 +89,6 @@ shl <reg>
 
 shll <reg>
 ; sh 3, <reg>
-
-in
-; hlt
-
-out
-; hlt
 
 ja <label> ; jump to label address
 ; ll <label>
@@ -182,7 +176,7 @@ MACHINE CODES:
 0000 1001 dec
 0000 1010 get
 0000 1011 set
-0000 1100
+0000 1100 (sw)
 0000 1101
 0000 1110 in
 0000 1111 out

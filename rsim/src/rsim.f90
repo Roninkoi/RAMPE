@@ -1,7 +1,7 @@
 ! RSIM - RAMPE simulator
 ! simulates the RAMPE CPU in software
 ! capable of running machine language from RASM
-! command line use: rsim <mode> <file>
+! command line use: rsim [mode] [file]
 ! mode = -s (single step), -c (clock), -q (run quietly)
 ! file = relative path to .rexe executable
 ! rsim (0 = run from stdin)
@@ -150,6 +150,8 @@ contains
     a1 = ishft(v, -2)
     a2 = iand(ins, m2)
 
+    jumping = .false.
+    
     select case (ins) ! system codes
     case (int(b'00000000'))
        call r_nop()
@@ -163,6 +165,8 @@ contains
        call r_get(a, pc)
     case (int(b'00001011'))
        call r_set(a, pc)
+    case (int(b'00001100'))
+       jumping = r_sw(a, b, bank, pc)
     case (int(b'00001110'))
        call r_in(a)
     case (int(b'00001111'))
@@ -191,8 +195,6 @@ contains
        rp2 => d
     end select
 
-    jumping = .false.
-    
     select case (i) ! instruction code
     case (int(b'0001'))
        jumping = r_jmp(rp1, pc)

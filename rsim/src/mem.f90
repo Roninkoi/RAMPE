@@ -2,8 +2,10 @@ module mem
   implicit none
 
   ! program in bytes
-  character(8) :: p(0:255) = "00000000"
-  integer*2 :: pl = 256 ! program length
+  integer*4, parameter :: pl = 65536 ! program size
+  character(8) :: p(0:pl-1) = "00000000"
+  integer*2, parameter :: bl = 256 ! bank size
+  integer*2 :: bank = 0
 
   public :: loadprog
   public :: fetch
@@ -38,7 +40,7 @@ contains
     integer*2 :: c = 0
     integer*2 :: fetch
 
-    read(p(i), "(B8.8)") c
+    read(p(bank*pl + i), "(B8.8)") c
     fetch = c
     return
   end function fetch
@@ -46,14 +48,14 @@ contains
   subroutine iwrite(a, v)
     integer*2 :: v, a
 
-    write(p(a), "(B8.8)") v
+    write(p(bank*pl + a), "(B8.8)") v
   end subroutine iwrite
 
   subroutine swrite(a, v)
     character(8) :: v
     integer*2 :: a
 
-    write(p(a), "(A)") v
+    write(p(bank*pl + a), "(A)") v
   end subroutine swrite
 
   subroutine memdump()
