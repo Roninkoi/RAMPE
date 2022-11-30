@@ -10,7 +10,7 @@ program rasm
   character(32) :: op, a1, a2 ! opcode, args
   character(32) :: instructions(pl) ! program
   integer :: val
-  integer :: line, io, lines, insnum, explen
+  integer :: line, io, lines
   integer :: adr, adrh, bnk, bnkh ! address, bank
 
   character(32) :: labels(pl) ! list of labels
@@ -254,17 +254,15 @@ program rasm
   lines = line - 1
   line = 1
   ins = ""
-  insnum = 1 ! instruction number
-  explen = 0 ! expansion length
   io = 0
 
   do while (line <= lines) ! instruction parsing
      ins = instructions(line)
 
-     bnkh = ishft(insnum-1, -12)
-     bnk = ishft(insnum-1, -8) - ishft(bnkh, 4)
-     adrh = ishft(insnum-1, -4) - ishft(bnk, 4) - ishft(bnkh, 8)
-     adr = insnum - 1 - ishft(adrh, 4) - ishft(bnk, 8) - ishft(bnkh, 12)
+     bnkh = ishft(line-1, -12)
+     bnk = ishft(line-1, -8) - ishft(bnkh, 4)
+     adrh = ishft(line-1, -4) - ishft(bnk, 4) - ishft(bnkh, 8)
+     adr = line - 1 - ishft(adrh, 4) - ishft(bnk, 8) - ishft(bnkh, 12)
 
      call parse(ins, op, a1, a2)
 
@@ -300,9 +298,7 @@ program rasm
      write(*, "(I5 ' | ' I2 ', ' I2 ', ' I2 ', ' I2 ' | ' A10A)") line, bnkh, bnk, adrh, adr, ml, ins
      write(9, "(A8)") ml
 
-     line = line + 1 - explen
-     insnum = insnum + 1
-     explen = 0
+     line = line + 1
   end do
 
   call cpu_time(end)
