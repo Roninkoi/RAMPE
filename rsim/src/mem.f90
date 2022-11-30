@@ -42,19 +42,28 @@ contains
     end if
     pc = mod(pc, bl)
   end subroutine incpc
-  
-  function fetch(i) ! fetch instruction from memory
+
+  function fetch(i, fi) ! fetch instruction from memory
     integer*2 :: i
     integer*2 :: c = 0
     integer*2 :: fetch
     integer :: io
+    character(32) :: ins
+    logical :: fi ! fetch from program?
 
-    read(p(bank*bl + i), "(B8.8)", iostat=io) c
-    if (io /= 0) then
-       print *, "Bad instruction:", p(bank*bl + i)
+    if (fi) then
+       read(p(bank*bl + i), *, iostat=io) ins
+       read(ins, "(B8.8)", iostat=io) c
+    else
+       read(*, *, iostat=io) ins ! from stdin
+       read(ins, "(B8.8)", iostat=io) c
     end if
+
+    if (io /= 0) then
+       print *, "Bad instruction:", ins
+    end if
+
     fetch = c
-    return
   end function fetch
 
   subroutine iwrite(a, v)
@@ -85,13 +94,13 @@ contains
   subroutine r_ld(a, b) ! load accumulator
     integer*2 :: a, b
 
-    a = fetch(b)
+    a = fetch(b, .true.)
   end subroutine r_ld
 
   subroutine r_get(a, pc)
     integer*2 :: a, pc
 
-    a = fetch(pc)
+    a = fetch(pc, .true.)
   end subroutine r_get
 
   subroutine r_set(a, pc)

@@ -92,20 +92,13 @@ program rsim
      ! cpu simulation start
 
      ! instruction fetching
-     if (fi) then
-        ir = fetch(pc) ! instruction
-     else
-        read(*, *) si ! from stdin
-        !call swrite(pc, si) ! write to mem
-        !ir = fetch(pc) ! instruction
-        read(si, "(B8.8)") ir
-     end if
-
+     ir = fetch(pc, fi)
+     
      ! instruction decoding
      call decode(ir) ! magic here
 
      if (.not. jumping) then
-        call incpc(pc)
+        call incpc(pc) ! increment program counter
      end if
 
      ! cpu simulation end
