@@ -35,12 +35,20 @@ contains
     close(8)
   end subroutine loadprog
 
+  subroutine incpc(pc)
+    integer*2 :: pc
+    if (pc+1 < pl) then
+       pc = pc + 1 ! inc pc
+    end if
+    pc = mod(pc, bl)
+  end subroutine incpc
+  
   function fetch(i) ! fetch instruction from memory
     integer*2 :: i
     integer*2 :: c = 0
     integer*2 :: fetch
 
-    read(p(bank*pl + i), "(B8.8)") c
+    read(p(bank*bl + i), "(B8.8)") c
     fetch = c
     return
   end function fetch
@@ -48,14 +56,14 @@ contains
   subroutine iwrite(a, v)
     integer*2 :: v, a
 
-    write(p(bank*pl + a), "(B8.8)") v
+    write(p(bank*bl + a), "(B8.8)") v
   end subroutine iwrite
 
   subroutine swrite(a, v)
     character(8) :: v
     integer*2 :: a
 
-    write(p(bank*pl + a), "(A)") v
+    write(p(bank*bl + a), "(A)") v
   end subroutine swrite
 
   subroutine memdump()

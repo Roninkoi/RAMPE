@@ -9,11 +9,13 @@ program rasm
   character(32) :: op, a1, a2
   character(32) :: instructions(65536) ! prog max size
   integer :: line, io, lines, insnum, explen
-  integer :: adr, bnk
+  integer :: adr, adrh, bnk, bnkh
 
   character(32) :: labels(32)
   integer :: ladr(32)
+  integer :: ladrh(32)
   integer :: lbnk(32)
+  integer :: lbnkh(32)
   integer :: li
 
   character(32) :: labelc
@@ -58,12 +60,30 @@ program rasm
 
      call parse(ins, op, a1, a2)
 
-     bnk = ishft(line-1, -4)
-     adr = line - ishft(bnk, 4) - 1
-
+     bnkh = ishft(line-1, -12)
+     bnk = ishft(line-1, -8) - ishft(bnkh, 4)
+     adrh = ishft(line-1, -4) - ishft(bnk, 4) - ishft(bnkh, 8)
+     adr = line - 1 - ishft(adrh, 4) - ishft(bnk, 8) - ishft(bnkh, 12)
+     
      call label(ins, labelc, li) ! memory labeling
      
      if (op == "la") then
+        instructions(line) = "ll " // a1
+        line = line + 1
+        instructions(line) = "lh " // a1
+     end if
+     if (op == "lb") then
+        instructions(line) = "ll " // "@" // a1
+        line = line + 1
+        instructions(line) = "lh " // "@" // a1
+     end if
+     if (op == "lba") then
+        instructions(line) = "ll " // "@" // a1
+        line = line + 1
+        instructions(line) = "lh " // "@" // a1
+        line = line + 1
+        instructions(line) = "mov b, a"
+        line = line + 1
         instructions(line) = "ll " // a1
         line = line + 1
         instructions(line) = "lh " // a1
@@ -208,7 +228,9 @@ program rasm
 
      if (labelc /= "") then
         labels(li-1) = labelc
+        ladrh(li-1) = adrh
         ladr(li-1) = adr
+        lbnkh(li-1) = bnkh
         lbnk(li-1) = bnk
      end if
 
@@ -225,18 +247,27 @@ program rasm
   do while (line <= lines) ! instruction parsing
      ins = instructions(line)
 
-     bnk = ishft(insnum - 1, -4)
-     adr = insnum - ishft(bnk, 4) - 1
-
+     bnkh = ishft(insnum-1, -12)
+     bnk = ishft(insnum-1, -8) - ishft(bnkh, 4)
+     adrh = ishft(insnum-1, -4) - ishft(bnk, 4) - ishft(bnkh, 8)
+     adr = insnum - 1 - ishft(adrh, 4) - ishft(bnk, 8) - ishft(bnkh, 12)
+     
      call parse(ins, op, a1, a2)
 
      labeli = 1
      do while (labeli < li) ! label substitution
         if (a1 == labels(labeli)) then
-           if (op == "lh") then ! label bank
-              a1 = itoc(lbnk(labeli))
+           if (op == "lh") then ! label high address
+              a1 = itoc(ladrh(labeli))
            else
               a1 = itoc(ladr(labeli))
+           end if
+        end if
+        if (a1 == "@" // labels(labeli)) then
+           if (op == "lh") then ! label high bank
+              a1 = itoc(lbnkh(labeli))
+           else
+              a1 = itoc(lbnk(labeli))
            end if
         end if
         if (a2 == labels(labeli)) then
@@ -247,7 +278,7 @@ program rasm
 
      ml = ops(op, a1, a2) ! machine translation
 
-     write(*, "(I4 ' | ' I2 ', '  I2 ' |  ' A10A)") line, bnk, adr, ml, ins
+     write(*, "(I4 ' | ' I2 ', ' I2 ', ' I2 ' | ' A10A)") line, bnk, adrh, adr, ml, ins
      write(9, "(A8)") ml
 
      line = line + 1 - explen
@@ -264,7 +295,7 @@ program rasm
 
   labeli = 1
   do while (labeli < li)
-     write(*, "(A10 ' = ' I4 ', ' I4)") labels(labeli), lbnk(labeli), ladr(labeli)
+     write(*, "(A10 ' = ' I4 ', ' I4 ', ' I4)") labels(labeli), lbnk(labeli), ladrh(labeli), ladr(labeli)
      labeli = labeli + 1
   end do
 

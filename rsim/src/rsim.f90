@@ -105,7 +105,7 @@ program rsim
      call decode(ir) ! magic here
 
      if (.not. jumping) then
-        pc = pc + 1 ! inc pc
+        call incpc(pc)
      end if
 
      ! cpu simulation end
@@ -122,6 +122,9 @@ program rsim
         end if
 
         call printreg()
+        if (bank > 0) then
+           write(*, "('bank: ' B8.8 ' ('I0')')") bank, bank
+        end if
      endif
 
      t = t + 1

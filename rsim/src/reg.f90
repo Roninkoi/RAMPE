@@ -47,13 +47,13 @@ contains
   end function tc2d
 
   subroutine printreg()
-    write(*, "('a:   ' B8.8 ' ('I0')')") a, tc2d(a)
-    write(*, "('b:   ' B8.8 ' ('I0')')") b, tc2d(b)
-    write(*, "('c:   ' B8.8 ' ('I0')')") c, tc2d(c)
-    write(*, "('d:   ' B8.8 ' ('I0')')") d, tc2d(d)
+    write(*, "('a:    ' B8.8 ' ('I0')')") a, tc2d(a)
+    write(*, "('b:    ' B8.8 ' ('I0')')") b, tc2d(b)
+    write(*, "('c:    ' B8.8 ' ('I0')')") c, tc2d(c)
+    write(*, "('d:    ' B8.8 ' ('I0')')") d, tc2d(d)
 
-    write(*, "('ir:  ' B8.8 ' ('I0')')") ir, ir
-    write(*, "('pc:  ' B8.8 ' ('I0')')") pc, pc
+    write(*, "('ir:   ' B8.8 ' ('I0')')") ir, ir
+    write(*, "('pc:   ' B8.8 ' ('I0')')") pc, pc
   end subroutine printreg
 
   logical function checkof()
