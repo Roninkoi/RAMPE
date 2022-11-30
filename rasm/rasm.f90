@@ -5,27 +5,25 @@ program rasm
   implicit none
 
   integer, parameter :: pl = 65536 ! program length
+  integer :: argc
   character(16) :: carg1, carg2
-  character(32) :: ins, ml
+  character(32) :: ins, ml ! instruction, machine code
   character(32) :: op, a1, a2 ! opcode, args
   character(32) :: instructions(pl) ! program
-  integer :: val
-  integer :: line, io, lines
+  integer :: val, io
+  integer :: line, lines ! current line, number of lines
   integer :: adr, adrh, bnk, bnkh ! address, bank
 
+  character(32) :: labelc ! label string
   character(32) :: labels(pl) ! list of labels
   integer :: ladr(pl) ! low address label
   integer :: ladrh(pl) ! high address label
   integer :: lbnk(pl) ! low bank label
   integer :: lbnkh(pl) ! high bank label
-  integer :: li
-
-  character(32) :: labelc
-  integer :: labeli
+  integer :: labeli ! first pass label index, number of labels
+  integer :: li ! label index
 
   real :: start, end, time
-
-  integer :: argc
 
   argc = iargc()
 
@@ -47,7 +45,6 @@ program rasm
   call cpu_time(start)
 
   line = 1
-  li = 1
   labeli = 1
   ins = ""
   io = 0
@@ -67,7 +64,7 @@ program rasm
      adrh = ishft(line-1, -4) - ishft(bnk, 4) - ishft(bnkh, 8)
      adr = line - 1 - ishft(adrh, 4) - ishft(bnk, 8) - ishft(bnkh, 12)
      
-     call label(ins, labelc, li) ! memory labeling
+     call label(ins, labelc, labeli) ! memory labeling
      
      if (op == "la") then
         instructions(line) = "ll " // a1
@@ -241,11 +238,11 @@ program rasm
      end if
 
      if (labelc /= "") then
-        labels(li-1) = labelc
-        ladrh(li-1) = adrh
-        ladr(li-1) = adr
-        lbnkh(li-1) = bnkh
-        lbnk(li-1) = bnk
+        labels(labeli-1) = labelc
+        ladrh(labeli-1) = adrh
+        ladr(labeli-1) = adr
+        lbnkh(labeli-1) = bnkh
+        lbnk(labeli-1) = bnk
      end if
 
      line = line + 1
@@ -266,26 +263,26 @@ program rasm
 
      call parse(ins, op, a1, a2)
 
-     labeli = 1
-     do while (labeli < li) ! label substitution
-        if (a1 == labels(labeli)) then
+     li = 1
+     do while (li < labeli) ! label substitution
+        if (a1 == labels(li)) then
            if (op == "lh") then ! label high address
-              a1 = itoc(ladrh(labeli))
+              a1 = itoc(ladrh(li))
            else
-              a1 = itoc(ladr(labeli))
+              a1 = itoc(ladr(li))
            end if
         end if
-        if (a1 == "@" // labels(labeli)) then
+        if (a1 == "@" // labels(li)) then
            if (op == "lh") then ! label high bank
-              a1 = itoc(lbnkh(labeli))
+              a1 = itoc(lbnkh(li))
            else
-              a1 = itoc(lbnk(labeli))
+              a1 = itoc(lbnk(li))
            end if
         end if
-        if (a2 == labels(labeli)) then
-           a2 = itoc(ladr(labeli))
+        if (a2 == labels(li)) then
+           a2 = itoc(ladr(li))
         end if
-        labeli = labeli + 1
+        li = li + 1
      end do
 
      ml = ops(op, a1, a2) ! machine translation
@@ -308,10 +305,10 @@ program rasm
   print *, ""
   print *, "labels:"
 
-  labeli = 1
-  do while (labeli < li)
-     write(*, "(A10 ' = ' I2 ', ' I2 ', ' I2 ', ' I2)") labels(labeli), lbnkh(labeli), lbnk(labeli), ladrh(labeli), ladr(labeli)
-     labeli = labeli + 1
+  li = 1
+  do while (li < labeli)
+     write(*, "(A10 ' = ' I2 ', ' I2 ', ' I2 ', ' I2)") labels(li), lbnkh(li), lbnk(li), ladrh(li), ladr(li)
+     li = li + 1
   end do
 
   print *, ""
