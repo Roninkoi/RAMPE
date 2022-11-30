@@ -278,7 +278,7 @@ program rasm
 
      ml = ops(op, a1, a2) ! machine translation
 
-     write(*, "(I4 ' | ' I2 ', ' I2 ', ' I2 ' | ' A10A)") line, bnk, adrh, adr, ml, ins
+     write(*, "(I5 ' | ' I2 ', ' I2 ', ' I2 ', ' I2 ' | ' A10A)") line, bnkh, bnk, adrh, adr, ml, ins
      write(9, "(A8)") ml
 
      line = line + 1 - explen
@@ -295,7 +295,7 @@ program rasm
 
   labeli = 1
   do while (labeli < li)
-     write(*, "(A10 ' = ' I4 ', ' I4 ', ' I4)") labels(labeli), lbnk(labeli), ladrh(labeli), ladr(labeli)
+     write(*, "(A10 ' = ' I2 ', ' I2 ', ' I2 ', ' I2)") labels(labeli), lbnkh(labeli), lbnk(labeli), ladrh(labeli), ladr(labeli)
      labeli = labeli + 1
   end do
 
