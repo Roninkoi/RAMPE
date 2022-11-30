@@ -142,6 +142,27 @@ program rasm
         line = line + 1
         instructions(line) = "ld a, a"
      end if
+     if (op == "ldb") then
+        instructions(line) = "ll " // a1
+        line = line + 1
+        instructions(line) = "lh " // a1
+        line = line + 1
+        instructions(line) = "ld b, a"
+     end if
+     if (op == "ldc") then
+        instructions(line) = "ll " // a1
+        line = line + 1
+        instructions(line) = "lh " // a1
+        line = line + 1
+        instructions(line) = "ld c, a"
+     end if
+     if (op == "ldd") then
+        instructions(line) = "ll " // a1
+        line = line + 1
+        instructions(line) = "lh " // a1
+        line = line + 1
+        instructions(line) = "ld d, a"
+     end if
      if (op == "sta") then
         instructions(line) = "mov b, a"
         line = line + 1

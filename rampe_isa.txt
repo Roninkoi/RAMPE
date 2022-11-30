@@ -146,6 +146,21 @@ lda <label> ; load a from label address
 ; lh <label>
 ; ld a, a
 
+ldb <label> ; load b from label address
+; ll <label>
+; lh <label>
+; ld b, a
+
+ldc <label> ; load c from label address
+; ll <label>
+; lh <label>
+; ld c, a
+
+ldd <label> ; load c from label address
+; ll <label>
+; lh <label>
+; ld d, a
+
 sta <label> ; store a to label address
 ; mov b, a
 ; ll <label>
