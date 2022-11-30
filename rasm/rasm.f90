@@ -263,6 +263,7 @@ program rasm
      adr = insnum - 1 - ishft(adrh, 4) - ishft(bnk, 8) - ishft(bnkh, 12)
      
      call parse(ins, op, a1, a2)
+     print *, a1, a2
 
      labeli = 1
      do while (labeli < li) ! label substitution
@@ -483,6 +484,7 @@ contains
     character(32) :: r
     character(32) :: b
 
+    b = "00"
     select case(r)
     case ("a")
        b = "00"
