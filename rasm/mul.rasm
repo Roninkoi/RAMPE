@@ -12,17 +12,23 @@ out
 hlt
 
 mulreturn: nop ; memory location for return address
-; multiply b * c, return to d with result in b
-mul: jez b, d ; either operand zero
-jez c, d
-std mulreturn ; save return address
-mov d, b ; d is counter
-xor b, b
-mulloop: add b, c ; repeated addition of c
-mov a, d ; decrement d
-dec
-mov d, a
-lda mulreturn ; load return address
-jez d, a ; return?
-ja mulloop ; add again
+mulzero: ; return zero
+    xor b, b
+    mov a, d
+    jmp a
+mul: ; multiply positive integers b * c, return to d with result in b
+    jeb mulzero ; return if either operand zero
+    jec mulzero
+    std mulreturn ; save return address
+    
+    mov d, b ; d is counter
+    xor b, b
+    mulloop:
+        add b, c ; repeated addition of c
+        mov a, d ; decrement d
+        dec
+        mov d, a
+        lda mulreturn ; load return address
+        jez d, a ; return?
+        ja mulloop ; add again
 
