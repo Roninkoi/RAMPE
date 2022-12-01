@@ -97,6 +97,7 @@ contains
     if (io /= 0) then
        print *, "Bad integer:", c
     end if
+    a = iand(a, maxval)
   end subroutine r_in
 
   ! register instructions

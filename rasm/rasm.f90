@@ -4,18 +4,19 @@
 program rasm
   implicit none
 
+  integer, parameter :: maxcols = 64 ! maximum length of line
   integer, parameter :: pl = 65536 ! program length
   integer :: argc
-  character(16) :: carg1, carg2
-  character(32) :: ins, ml ! instruction, machine code
-  character(32) :: op, a1, a2 ! opcode, args
-  character(32) :: instructions(pl) ! program
+  character(80) :: carg1, carg2
+  character(maxcols) :: ins, ml ! instruction, machine code
+  character(maxcols) :: op, a1, a2 ! opcode, args
+  character(maxcols) :: instructions(pl) ! program
   integer :: val, io
   integer :: line, lines ! current line, number of lines
   integer :: adr, adrh, bnk, bnkh ! address, bank
 
-  character(32) :: labelc ! label string
-  character(32) :: labels(pl) ! list of labels
+  character(maxcols) :: labelc ! label string
+  character(maxcols) :: labels(pl) ! list of labels
   integer :: ladr(pl) ! low address label
   integer :: ladrh(pl) ! high address label
   integer :: lbnk(pl) ! low bank label
@@ -54,7 +55,7 @@ program rasm
      if (io < 0) then
         exit
      end if
-     ins = trim(ins)
+     ins = adjustl(trim(ins))
      instructions(line) = ins
 
      call parse(ins, op, a1, a2)
@@ -238,7 +239,7 @@ program rasm
      end if
 
      if (labelc /= "") then
-        labels(labeli-1) = labelc
+        labels(labeli-1) = trim(labelc)
         ladrh(labeli-1) = adrh
         ladr(labeli-1) = adr
         lbnkh(labeli-1) = bnkh
@@ -292,7 +293,7 @@ program rasm
         print *, "Not a valid instruction:", ml
      end if
 
-     write(*, "(I5 ' | ' I2 ', ' I2 ', ' I2 ', ' I2 ' | ' A10A)") line, bnkh, bnk, adrh, adr, ml, ins
+     write(*, "(I5 ' | ' I2 ', ' I2 ', ' I2 ', ' I2 ' | ' A10A)") line, bnkh, bnk, adrh, adr, ml, trim(ins)
      write(9, "(A8)") ml
 
      line = line + 1
@@ -318,8 +319,8 @@ program rasm
   close(9)
 contains
   subroutine label(in, lab, l)
-    character(32), intent(in) :: in
-    character(32), intent(out) :: lab
+    character(maxcols), intent(in) :: in
+    character(maxcols), intent(out) :: lab
     integer, intent(inout) :: l
 
     logical :: ns, ons
@@ -332,7 +333,7 @@ contains
 
     lab = ""
 
-    do while (i <= 32)
+    do while (i <= maxcols)
        c = in(i:i)
 
        ons = ns
@@ -352,7 +353,7 @@ contains
           !print *, lab
           !print *, la
 
-          lab = in(1:i-1)
+          lab = adjustl(trim(in(1:i-1)))
 
           l = l + 1
 
@@ -366,8 +367,8 @@ contains
   end subroutine label
 
   subroutine parse(ins, op, a1, a2)
-    character(32) :: ins
-    character(32) :: op, a1, a2
+    character(maxcols) :: ins
+    character(maxcols) :: op, a1, a2
 
     logical :: ns, ons, istart
     character :: c
@@ -383,7 +384,7 @@ contains
 
     istart = .false.
 
-    do while (i <= 32 .and. word < 3)
+    do while (i <= maxcols .and. word < 3)
        c = ins(i:i)
 
        ons = ns
@@ -428,8 +429,8 @@ contains
   end subroutine parse
 
   function ctob4(c) result(b) ! char to bit 4
-    character(32) :: c
-    character(32) :: b
+    character(maxcols) :: c
+    character(maxcols) :: b
     integer :: i
 
     read(c, *, iostat=io) i
@@ -438,8 +439,8 @@ contains
   end function ctob4
 
   function ctob3(c) result(b) ! char to bit 3
-    character(32) :: c
-    character(32) :: b
+    character(maxcols) :: c
+    character(maxcols) :: b
     integer :: i
 
     read(c, *, iostat=io) i
@@ -448,8 +449,8 @@ contains
   end function ctob3
 
   function ctob2(c) result(b) ! char to bit 2
-    character(32) :: c
-    character(32) :: b
+    character(maxcols) :: c
+    character(maxcols) :: b
     integer :: i
 
     read(c, *, iostat=io) i
@@ -458,8 +459,8 @@ contains
   end function ctob2
 
   function ctob1(c) result(b) ! char to bit 1
-    character(32) :: c
-    character(32) :: b
+    character(maxcols) :: c
+    character(maxcols) :: b
     integer :: i
 
     read(c, *, iostat=io) i
@@ -468,7 +469,7 @@ contains
   end function ctob1
 
   function ctoi(c) result(b) ! char to integer
-    character(32) :: c
+    character(maxcols) :: c
     integer :: b
     integer :: i = 0
 
@@ -478,8 +479,8 @@ contains
   end function ctoi
 
   function itoc(i) result(b) ! integer to char
-    character(32) :: c = ""
-    character(32) :: b
+    character(maxcols) :: c = ""
+    character(maxcols) :: b
     integer :: i
 
     write(c, *) i
@@ -487,8 +488,8 @@ contains
   end function itoc
 
   function rtob2(r) result(b) ! register name to bit 2
-    character(32) :: r
-    character(32) :: b
+    character(maxcols) :: r
+    character(maxcols) :: b
 
     b = "00"
     select case(r)
@@ -506,9 +507,9 @@ contains
   end function rtob2
 
   function ops(op, a1, a2) result(ml)
-    character(32) :: op, a1, a2
-    character(32) :: ml
-    character(32) :: ac1, ac2
+    character(maxcols) :: op, a1, a2
+    character(maxcols) :: ml
+    character(maxcols) :: ac1, ac2
     integer :: ai1, ai2
 
     select case (op)
