@@ -90,7 +90,13 @@ contains
 
   subroutine r_in(a)
     integer*2 :: a
-    read(*, "(I8)") a
+    integer :: io
+    character(32) :: c
+    read(*, *, iostat=io) c
+    read(c, "(I8)", iostat=io) a
+    if (io /= 0) then
+       print *, "Bad integer:", c
+    end if
   end subroutine r_in
 
   ! register instructions
