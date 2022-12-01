@@ -15,23 +15,23 @@ r2: out
 
 hlt
 
-; rotate b right, return to d with result in a
-rotr: mov a, b
-shr a ; a >> 1
-shll b ; b << 7 
-shll b
-shll b
-shl b ; msb remains
-or a, b ; stick msb to end
-jmp d
+rotr: ; rotate b right, return to d with result in a
+    mov a, b
+    shr a ; a >> 1
+    shll b ; b << 7 
+    shll b
+    shll b
+    shl b ; msb remains
+    or a, b ; stick msb to end
+    jmp d
 
-; rotate b left, return to d with result in a
-rotl: mov a, b
-shl a ; a << 1
-shrr b ; b >> 7 
-shrr b
-shrr b
-shr b ; lsb remains
-or a, b ; stick lsb to end
-jmp d
+rotl: ; rotate b left, return to d with result in a
+    mov a, b
+    shl a ; a << 1
+    shrr b ; b >> 7 
+    shrr b
+    shrr b
+    shr b ; lsb remains
+    or a, b ; stick lsb to end
+    jmp d
 
