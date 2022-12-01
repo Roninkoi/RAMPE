@@ -164,8 +164,10 @@ contains
     case (int(b'00001100'))
        jumping = r_sw(a, b, bank, pc)
     case (int(b'00001110'))
+       if (.not. q) print *, "in:"
        call r_in(a)
     case (int(b'00001111'))
+       if (.not. q) print *, "out:"
        call r_out(a)
     end select
 

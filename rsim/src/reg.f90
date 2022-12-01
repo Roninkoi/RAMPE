@@ -85,13 +85,11 @@ contains
 
   subroutine r_out(a)
     integer*2 :: a
-    print *, "out:"
     write(*, "(I0)") tc2d(a)
   end subroutine r_out
 
   subroutine r_in(a)
     integer*2 :: a
-    print *, "in:"
     read(*, "(I8)") a
   end subroutine r_in
 

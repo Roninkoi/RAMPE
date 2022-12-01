@@ -1,3 +1,5 @@
 #!/bin/sh
-rasm/rasm $1 rasm/prog.rexe && rsim/rsim rasm/prog.rexe
+# Assemble .rasm file and run fast
+# Usage: ./run.sh <prog.rasm>
+./rasm/rasm $1 ./rasm/prog.rexe && ./rsim/rsim ./rasm/prog.rexe
 
