@@ -91,6 +91,8 @@ program rsim
 
      ! cpu simulation start
 
+     if (.not. q) write(*, "('cycle: ' I0)") (t+1)
+     
      ! instruction fetching
      ir = fetch(pc, fi)
      
@@ -104,8 +106,6 @@ program rsim
      ! cpu simulation end
 
      if (.not. q) then
-        write(*, "('cycle: ' I0)") (t+1)
-
         if (checkof()) then
            print *, "Overflow!"
         end if
