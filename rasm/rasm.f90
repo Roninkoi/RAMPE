@@ -10,13 +10,13 @@ program rasm
   character(80) :: carg1, carg2
   character(maxcols) :: ins, ml ! instruction, machine code
   character(maxcols) :: op, a1, a2 ! opcode, args
-  character(maxcols) :: instructions(pl) ! program
+  character(maxcols) :: instructions(pl) = "" ! program
   integer :: val, io
   integer :: line, lines ! current line, number of lines
   integer :: adr, adrh, bnk, bnkh ! address, bank
 
   character(maxcols) :: labelc ! label string
-  character(maxcols) :: labels(pl) ! list of labels
+  character(maxcols) :: labels(pl) = "" ! list of labels
   integer :: ladr(pl) ! low address label
   integer :: ladrh(pl) ! high address label
   integer :: lbnk(pl) ! low bank label
@@ -57,7 +57,7 @@ program rasm
      end if
      ins = adjustl(trim(ins))
      instructions(line) = ins
-
+     
      call parse(ins, op, a1, a2)
 
      bnkh = ishft(line-1, -12)
@@ -66,7 +66,7 @@ program rasm
      adr = line - 1 - ishft(adrh, 4) - ishft(bnk, 8) - ishft(bnkh, 12)
      
      call label(ins, labelc, labeli) ! memory labeling
-     
+
      if (op == "la") then
         instructions(line) = "ll " // a1
         line = line + 1
@@ -239,7 +239,7 @@ program rasm
      end if
 
      if (labelc /= "") then
-        labels(labeli-1) = trim(labelc)
+        labels(labeli-1) = adjustl(trim(labelc))
         ladrh(labeli-1) = adrh
         ladr(labeli-1) = adr
         lbnkh(labeli-1) = bnkh
@@ -293,7 +293,7 @@ program rasm
         print *, "Not a valid instruction:", ml
      end if
 
-     write(*, "(I5 ' | ' I2 ', ' I2 ', ' I2 ', ' I2 ' | ' A10A)") line, bnkh, bnk, adrh, adr, ml, trim(ins)
+     write(*, "(I5, ' | ', I2, ', ', I2, ', ', I2, ', ', I2, ' | ', A10, A)") line, bnkh, bnk, adrh, adr, ml, trim(ins)
      write(9, "(A8)") ml
 
      line = line + 1
@@ -308,7 +308,7 @@ program rasm
 
   li = 1
   do while (li < labeli)
-     write(*, "(A10 ' = ' I2 ', ' I2 ', ' I2 ', ' I2)") labels(li), lbnkh(li), lbnk(li), ladrh(li), ladr(li)
+     write(*, "(A10, ' = ', I2, ', ', I2, ', ', I2, ', ', I2)") labels(li), lbnkh(li), lbnk(li), ladrh(li), ladr(li)
      li = li + 1
   end do
 

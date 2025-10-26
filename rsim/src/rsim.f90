@@ -91,7 +91,7 @@ program rsim
 
      ! cpu simulation start
 
-     if (.not. q) write(*, "('cycle: ' I0)") (t+1)
+     if (.not. q) write(*, "('cycle: ', I0)") (t+1)
      
      ! instruction fetching
      ir = fetch(pc, fi)
@@ -116,7 +116,7 @@ program rsim
 
         call printreg()
         if (bank > 0) then
-           write(*, "('bank: ' B8.8 ' ('I0')')") bank, bank
+           write(*, "('bank: ', B8.8, ' (', I0, ')')") bank, bank
         end if
      endif
 
